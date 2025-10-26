@@ -1,79 +1,107 @@
 import type { Request, Response } from 'express';
+import { z } from 'zod';
+import { requireAuthentication } from '../../middleware/require-authentication.js';
 import { validateBody, validateParams, validateQuery } from '../../middleware/validate.js';
+import { getErrorMessage } from '../../utils/get-error-message.js';
 import {
-  createUserProfileSchema,
-  updateUserProfileSchema,
-  getUserProfilesQuerySchema,
-  userProfileParamsSchema,
-} from './user-profile-schemas.js';
-import {
-  saveUserProfileToDatabase,
-  retrieveUserProfileFromDatabaseById,
-  retrieveManyUserProfilesFromDatabase,
-  updateUserProfileInDatabaseById,
   deleteUserProfileFromDatabaseById,
+  retrieveManyUserProfilesFromDatabase,
+  retrieveUserProfileFromDatabaseById,
+  updateUserProfileInDatabaseById,
 } from './user-profile-model.js';
 
-export async function createUserProfile(request: Request, response: Response) {
-  const validatedData = await validateBody(createUserProfileSchema, request, response);
-  const { email, name, password } = validatedData;
-  
-  const userProfile = await saveUserProfileToDatabase({
-    email,
-    name,
-    hashedPassword: `hashed_${password}`, // В реальном приложении нужно хешировать
+export async function getAllUserProfiles(request: Request, response: Response) {
+  // Middleware уже проверил аутентификацию в роутах
+  const query = await validateQuery(
+    z.object({
+      page: z.coerce.number().positive().default(1),
+      pageSize: z.coerce.number().positive().default(10),
+    }),
+    request,
+    response,
+  );
+
+  const profiles = await retrieveManyUserProfilesFromDatabase({
+    page: query.page,
+    pageSize: query.pageSize,
   });
-  
-  response.status(201).json(userProfile);
+
+  response.status(200).json(profiles);
 }
 
 export async function getUserProfileById(request: Request, response: Response) {
-  const { id } = await validateParams(userProfileParamsSchema, request, response);
-  const userProfile = await retrieveUserProfileFromDatabaseById(id);
-  
-  if (!userProfile) {
-    return response.status(404).json({ error: 'User profile not found' });
-  }
-  
-  response.json(userProfile);
-}
+  // Middleware уже проверил аутентификацию в роутах
+  const { id } = await validateParams(
+    z.object({ id: z.string().min(1) }),
+    request,
+    response,
+  );
+  const profile = await retrieveUserProfileFromDatabaseById(id);
 
-export async function getUserProfiles(request: Request, response: Response) {
-  const query = await validateQuery(getUserProfilesQuerySchema, request, response);
-  const page = query.page || 1;
-  const pageSize = query.pageSize || 10;
-  
-  const userProfiles = await retrieveManyUserProfilesFromDatabase({
-    page,
-    pageSize,
-  });
-  
-  response.json(userProfiles);
+  if (profile) {
+    response.status(200).json(profile);
+  } else {
+    response.status(404).json({ message: 'Not Found' });
+  }
 }
 
 export async function updateUserProfile(request: Request, response: Response) {
-  const { id } = await validateParams(userProfileParamsSchema, request, response);
-  const updateData = await validateBody(updateUserProfileSchema, request, response);
-  
-  const updatedProfile = await updateUserProfileInDatabaseById({
-    id,
-    data: updateData,
-  });
-  
-  if (!updatedProfile) {
-    return response.status(404).json({ error: 'User profile not found' });
+  // Middleware уже проверил аутентификацию в роутах
+  const { id } = await validateParams(
+    z.object({ id: z.string().min(1) }),
+    request,
+    response,
+  );
+
+  const body = await validateBody(
+    z.object({
+      email: z.string().email().optional(),
+      name: z.string().min(1).optional(),
+    }),
+    request,
+    response,
+  );
+
+  if (Object.keys(body).length === 0) {
+    response.status(400).json({ message: 'No valid fields to update' });
+    return;
   }
-  
-  response.json(updatedProfile);
+
+  try {
+    const updatedProfile = await updateUserProfileInDatabaseById({
+      id,
+      data: body,
+    });
+    
+    if (updatedProfile) {
+      response.status(200).json(updatedProfile);
+    } else {
+      response.status(404).json({ message: 'Not Found' });
+    }
+  } catch (error) {
+    const message = getErrorMessage(error);
+    response.status(400).json({ message });
+  }
 }
 
 export async function deleteUserProfile(request: Request, response: Response) {
-  const { id } = await validateParams(userProfileParamsSchema, request, response);
-  const deletedProfile = await deleteUserProfileFromDatabaseById(id);
-  
-  if (!deletedProfile) {
-    return response.status(404).json({ error: 'User profile not found' });
+  // Middleware уже проверил аутентификацию в роутах
+  const { id } = await validateParams(
+    z.object({ id: z.string().min(1) }),
+    request,
+    response,
+  );
+
+  try {
+    const deletedProfile = await deleteUserProfileFromDatabaseById(id);
+    
+    if (deletedProfile) {
+      response.status(200).json(deletedProfile);
+    } else {
+      response.status(404).json({ message: 'Not Found' });
+    }
+  } catch (error) {
+    const message = getErrorMessage(error);
+    response.status(400).json({ message });
   }
-  
-  response.json({ message: 'User profile deleted successfully' });
 }
