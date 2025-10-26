@@ -104,6 +104,6 @@ export function getJwtTokenFromCookie(request: Request): { id: string; email: st
       throw new Error('Invalid token payload');
     }
   } catch (error) {
-    throw new Error('Invalid or expired token');
+    throw new Error('Invalid or expired token'); 
   }
 }
