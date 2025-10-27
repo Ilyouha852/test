@@ -3,6 +3,7 @@ import { healthCheckRoutes } from './features/health-check/health-check-routes.j
 import { userProfileRoutes } from './features/user-profile/user-profile-routes.js';
 import { authRoutes } from './features/auth/auth-routes.js';
 import { userAuthenticationRoutes } from './features/user-authentication/user-authentication-routes.js';
+import repairBotRoutes from './features/repair-bot/repairBotRoutes.js'; 
 
 export const apiV1Router = Router();
 
@@ -10,3 +11,4 @@ apiV1Router.use('/health-check', healthCheckRoutes);
 apiV1Router.use('/user-profiles', userProfileRoutes);
 apiV1Router.use('/auth', authRoutes);
 apiV1Router.use(userAuthenticationRoutes);
+apiV1Router.use('/repair-bot', repairBotRoutes); 
