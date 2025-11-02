@@ -4,6 +4,7 @@ import express from 'express';
 import morgan from 'morgan';
 
 import { apiV1Router } from './routes.js';
+import { initDynamoDB } from './utils/initDynamoDB.js';
 
 export function buildApp(): Express {
   const app = express();
@@ -11,6 +12,9 @@ export function buildApp(): Express {
   app.use(morgan('dev'));
   app.use(express.json());
   app.use(cookieParser());
+
+  // Инициализируем DynamoDB при запуске приложения
+  initDynamoDB().catch(console.error);
 
   // Простой гарантированный корневой route
   app.get('/', (req, res) => {
@@ -29,6 +33,8 @@ export function buildApp(): Express {
             <li><a href="/api/v1/health-check">Health Check</a></li>
             <li><a href="/api/v1/user-profiles">User Profiles</a></li>
             <li><a href="/api/v1/auth/cookies">Get Cookies</a></li>
+            <li><a href="/api/v1/counter">Counter (DynamoDB Test)</a></li>
+            <li><a href="/api/v1/repair-bot">Repair Bot</a></li>
           </ul>
         </body>
       </html>
