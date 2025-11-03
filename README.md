@@ -17,6 +17,12 @@ npm install
 ```bash
 yarn install
 ```
+### ВАЖНО!<br/> 
+Устанавливаем через yarn всё, лучше всего прописать:<br/>
+```bash
+yarn install --ignore-engines --ignore-optional
+```
+После уже можно хоть через yarn, хоть через npm работать<br/> 
 ### 3. Настройте окружение<br/>
 ```bash
 notepad .env
