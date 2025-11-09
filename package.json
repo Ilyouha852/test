@@ -13,15 +13,29 @@
     "lint:fix": "eslint . --fix",
     "test": "vitest",
     "setup": "node scripts/create-env.js",
+    
     "db:start": "node scripts/start-db.cjs",
     "db:stop": "node scripts/stop-db.cjs",
     "db:status": "node scripts/db-status.cjs",
     "db:logs": "docker-compose logs dynamodb-local",
-    "dev:with-db": "npm run db:start && npm run dev",
+    
+    "minio:start": "node scripts/start-minio.cjs",
+    "minio:stop": "node scripts/stop-minio.cjs",
+    "minio:status": "node scripts/minio-status.cjs",
+    "minio:logs": "docker-compose logs minio",
+    
+    "storage:start": "npm run db:start && npm run minio:start",
+    "storage:stop": "npm run db:stop && npm run minio:stop",
+    "storage:status": "npm run db:status && npm run minio:status",
+    
+    "dev:with-db": "npm run db:start && timeout 3 && npm run dev",
+    "dev:with-storage": "npm run storage:start && timeout 5 && npm run dev",
+    "dev:full": "npm run storage:start && timeout 5 && npm run dev",
+    
     "db:check-connection": "node scripts/check-dynamo-connection.cjs",
     "system:check": "node scripts/check-system.cjs",
-    "dev:full": "npm run db:start && timeout 3 && npm run dev",
-    "test:dynamodb": "npx ts-node src/test-dynamodb.ts"
+    "test:dynamodb": "npx ts-node src/test-dynamodb.ts",
+    "test-client": "npx ts-node src/test-client.ts"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.922.0",
@@ -76,7 +90,10 @@
     "xstate",
     "express",
     "typescript",
-    "dynamodb"
+    "dynamodb",
+    "minio",
+    "s3",
+    "storage"
   ],
   "author": "ZeneZ0",
   "license": "ISC",
