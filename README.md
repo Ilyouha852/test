@@ -17,6 +17,12 @@ npm install
 ```bash
 yarn install
 ```
+### ВАЖНО!<br/> 
+Устанавливаем через yarn всё, лучше всего прописать:<br/>
+```bash
+yarn install --ignore-engines --ignore-optional
+```
+После уже можно хоть через yarn, хоть через npm работать<br/> 
 ### 3. Настройте окружение<br/>
 ```bash
 notepad .env
@@ -81,3 +87,52 @@ npm run db:stop
 npm test
 ```
 ## И всё заработает! 🎉<br/>
+
+##Теперь работаем с MinIO<br/>
+###1. Запускаем MinIO<br/>
+```bash
+npm run minio:start
+```
+###2. Открываем в вебе<br/>
+Открываем http://localhost:9001/ в браузере<br/>
+Логин: minioadmin <br/>
+Пароль: minioadmin<br/>
+
+###3. Проверка статуса<br/>
+```bash
+npm run minio:status
+```
+###4. Стоп MinIO<br/>
+```bash
+npm run minio:stop
+```
+
+###Полезные команды<br/>
+```bash
+#Старт обеих баз данных
+npm run storage:start
+
+#Запустите сервер с хранилищем
+npm run dev:with-storage
+
+#Просмотр логов
+npm run minio:logs
+```
+###Установка корзины<br/>
+1.Go to http://localhost:9001<br/>
+
+2.Click "Create Bucket"<br/>
+
+3.Name: support-bot-files<br/>
+
+4.Create bucket<br/>
+
+###Доступ к API<br/>
+1.Endpoint: http://localhost:9000<br/>
+
+2.Access Key: minioadmin<br/>
+
+3.Secret Key: minioadmin<br/>
+
+4.Region: us-east-1<br/>
+

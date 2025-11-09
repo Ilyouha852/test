@@ -34,8 +34,17 @@
     
     "db:check-connection": "node scripts/check-dynamo-connection.cjs",
     "system:check": "node scripts/check-system.cjs",
+<<<<<<< HEAD
     "test:dynamodb": "npx ts-node src/test-dynamodb.ts",
     "test-client": "npx ts-node src/test-client.ts"
+=======
+    "dev:full": "npm run db:start && timeout 3 && npm run dev",
+    "test:dynamodb": "npx ts-node src/test-dynamodb.ts",
+    "test-client": "ts-node src/test-client.ts",
+    "test-dynamodb": "ts-node src/test-dynamodb.ts",
+    "dev": "tsx watch src/index.ts",
+    "test": "vitest"
+>>>>>>> 81a3d5abf11e4df30417b371aedde84a1efb8987
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.922.0",
