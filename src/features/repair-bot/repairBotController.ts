@@ -11,6 +11,7 @@ interface SessionResult {
 interface StateResult extends SessionResult {
   history: Array<{ state: string; timestamp: string }>;
   context: any;
+  message: string; // Добавляем это
 }
 
 class RepairBotController {
