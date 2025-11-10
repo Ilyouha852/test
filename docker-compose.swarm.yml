@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: your-registry/support-bot-ist:${TAG:-latest}
+    image: vladk1402/support-bot-ist:${TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile
