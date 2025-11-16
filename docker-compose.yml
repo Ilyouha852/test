@@ -5,12 +5,13 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+      placement:
+        constraints:
+          - node.labels.oar == true
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.support-bot.entrypoints=httpLocal"
         - "traefik.http.routers.support-bot.rule=Host(`study.dev.fardrive.ru`)"
-        # - "traefik.http.middlewares.support-bot-stripprefix.stripprefix.prefixes=/support-bot"
-        # - "traefik.http.routers.support-bot.middlewares=support-bot-stripprefix"
         - "traefik.http.services.support-bot.loadbalancer.server.port=3001"
         - "traefik.docker.network=proxy"
     environment:
@@ -35,6 +36,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+      placement:
+        constraints:
+          - node.labels.oar == true
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.minio.entrypoints=httpLocal"
@@ -53,39 +57,20 @@ services:
       - default
       - proxy
 
-  minio-console:
-    image: minio/minio:latest
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.minio-console.entrypoints=httpLocal"
-        - "traefik.http.routers.minio-console.rule=Host(`study.dev.fardrive.ru`) && PathPrefix(`/minio-console`)"
-        - "traefik.http.middlewares.minio-console-stripprefix.stripprefix.prefixes=/minio-console"
-        - "traefik.http.routers.minio-console.middlewares=minio-console-stripprefix"
-        - "traefik.http.services.minio-console.loadbalancer.server.port=9001"
-        - "traefik.docker.network=proxy"
-    environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
-    command: minio server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-    networks:
-      - default
-      - proxy
-
   dynamodb:
     image: amazon/dynamodb-local:latest
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
+      placement:
+        constraints:
+          - node.labels.oar == true
     command: -jar DynamoDBLocal.jar -sharedDb
     volumes:
       - dynamodb_data:/home/dynamodblocal
+    networks:
+      - default
 
 volumes:
   minio_data:
