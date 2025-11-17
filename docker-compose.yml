@@ -79,5 +79,6 @@ volumes:
     driver: local
 
 networks:
+  default:
   proxy:
     external: true
