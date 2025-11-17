@@ -23,7 +23,7 @@ jobs:
       
     - name: Build Docker image
       run: npm run docker:build
-      
+        
     - name: Deploy to Swarm
       run: npm run deploy:swarm
       env:
