@@ -12,25 +12,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build Docker image
-      run: npm run docker:build
-      
-    - name: Deploy to Swarm
+    - name: Deploy to Swarm via Portainer
       run: npm run deploy:swarm
       env:
         PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
         PORTAINER_API_KEY: ${{ secrets.PORTAINER_API_KEY }}
         PORTAINER_STACK_ID: ${{ secrets.PORTAINER_STACK_ID }}
         PORTAINER_ENDPOINT_ID: ${{ secrets.PORTAINER_ENDPOINT_ID }}
+        
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         DYNAMODB_TABLE: ${{ secrets.DYNAMODB_TABLE }}
         DYNAMODB_ENDPOINT: ${{ secrets.DYNAMODB_ENDPOINT }}
@@ -42,3 +31,5 @@ jobs:
         MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
         MINIO_REGION: ${{ secrets.MINIO_REGION }}
         MINIO_BUCKET: ${{ secrets.MINIO_BUCKET }}
+        
+        TAG: ${{ github.sha }}  # Автоматически использует хеш комита как тег
