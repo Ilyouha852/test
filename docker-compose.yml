@@ -1,13 +1,13 @@
 services:
   app:
-    image: vladk1402/support-bot-ist:${TAG:-latest}
+    image: cajodev/support-bot-app:latest
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
       placement:
         constraints:
-          - node.labels.oar == true
+          - node.hostname == oar
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.support-bot.entrypoints=httpLocal"
@@ -38,7 +38,7 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - node.labels.oar == true
+          - node.hostname == oar
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.minio-bot.entrypoints=httpLocal"
@@ -65,7 +65,7 @@ services:
         condition: on-failure
       placement:
         constraints:
-          - node.labels.oar == true
+          - node.hostname == oar
     command: -jar DynamoDBLocal.jar -sharedDb
     volumes:
       - dynamodb_data:/home/dynamodblocal
