@@ -12,7 +12,23 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
+<<<<<<< HEAD
     - name: Deploy to Swarm via Portainer
+=======
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build Docker image
+      run: npm run docker:build
+        
+    - name: Deploy to Swarm
+>>>>>>> c314bb05558de51415c9a396370384833ed21b16
       run: npm run deploy:swarm
       env:
         PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
