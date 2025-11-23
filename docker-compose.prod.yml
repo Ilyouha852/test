@@ -2,10 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: support-bot-ist:${TAG:-latest}
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: vladk1402/support_bot:latest
     ports:
       - "3007:3007"
     environment:
@@ -23,26 +20,15 @@ services:
       - MINIO_REGION=${MINIO_REGION}
       - MINIO_BUCKET=${MINIO_BUCKET}
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: any
-      update_config:
-        parallelism: 1
-        delay: 10s
 
-  # Сервисы БД (если нужны в Swarm)
   dynamodb:
     image: amazon/dynamodb-local:latest
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
     volumes:
       - dynamodb_data:/home/dynamodblocal/data
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.role == manager
 
   minio:
     image: minio/minio:latest
@@ -55,20 +41,7 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.role == manager
 
 volumes:
   dynamodb_data:
-    driver: local
   minio_data:
-    driver: local
-
-networks:
-  default:
-    driver: overlay

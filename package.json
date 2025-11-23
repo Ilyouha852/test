@@ -23,25 +23,17 @@
     "minio:stop": "node scripts/stop-minio.cjs",
     "minio:status": "node scripts/minio-status.cjs",
     "minio:logs": "docker-compose logs minio",
-
-    "deploy:swarm": "node scripts/deploy-to-swarm.js",
-    "deploy:test": "node scripts/test-deploy.js",
-    "docker:build": "docker build -t support-bot-ist .",
-    "docker:run": "docker run -p 3007:3007 -e JWT_SECRET=test support-bot-ist",
-    "docker:build-run": "npm run docker:build && npm run docker:run",
     
     "storage:start": "npm run db:start && npm run minio:start",
     "storage:stop": "npm run db:stop && npm run minio:stop",
     "storage:status": "npm run db:status && npm run minio:status",
     
-    "dev:with-db": "npm run db:start && timeout 3 && npm run dev",
-    "dev:with-storage": "npm run storage:start && timeout 5 && npm run dev",
-    "dev:full": "npm run storage:start && timeout 5 && npm run dev",
-    
-    "db:check-connection": "node scripts/check-dynamo-connection.cjs",
-    "system:check": "node scripts/check-system.cjs",
     "test:dynamodb": "npx ts-node src/test-dynamodb.ts",
-    "test-client": "npx ts-node src/test-client.ts"
+    "test-client": "npx ts-node src/test-client.ts",
+
+    "docker:build": "docker build -t support-bot-ist .",
+    "docker:run": "docker run -p 3007:3007 -e JWT_SECRET=test support-bot-ist",
+    "docker:build-run": "npm run docker:build && npm run docker:run"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.922.0",
