@@ -4,17 +4,19 @@ services:
   app:
     image: vladk1402/support_bot:latest
     ports:
-      - "3007:3007"
+      - "3010:3007"
     environment:
       - NODE_ENV=production
-      - PORT=3007
       - JWT_SECRET=super_secret_key_12345
+    depends_on:
+      - dynamodb
+      - minio
 
   dynamodb:
     image: amazon/dynamodb-local:latest
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
     ports:
-      - "8000:8000"
+      - "8010:8000"
 
   minio:
     image: minio/minio:latest
@@ -23,5 +25,5 @@ services:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
     ports:
-      - "9002:9000"    # Изменили 9000 → 9002
-      - "9001:9001"    # Оставили как есть
+      - "9010:9000"
+      - "9011:9001"
