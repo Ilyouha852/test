@@ -24,7 +24,7 @@ jobs:
     - name: Setup Docker Buildx
       uses: docker/setup-buildx-action@v3
       
-    - name: Build Docker image
+    - name: Build and tag Docker images
       run: |
         docker build -f Dockerfile.prod -t vladk1402/support_bot:${{ github.sha }} .
         docker build -f Dockerfile.prod -t vladk1402/support_bot:latest .
@@ -35,7 +35,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         
-    - name: Push Docker image
+    - name: Push Docker images
       run: |
         docker push vladk1402/support_bot:${{ github.sha }}
         docker push vladk1402/support_bot:latest
