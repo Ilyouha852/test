@@ -8,40 +8,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3007
-      - JWT_SECRET=${JWT_SECRET}
-      - DYNAMODB_TABLE=${DYNAMODB_TABLE}
-      - DYNAMODB_ENDPOINT=${DYNAMODB_ENDPOINT}
-      - DYNAMODB_REGION=${DYNAMODB_REGION}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-      - MINIO_REGION=${MINIO_REGION}
-      - MINIO_BUCKET=${MINIO_BUCKET}
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: any
+      - JWT_SECRET=super_secret_key_12345
 
   dynamodb:
     image: amazon/dynamodb-local:latest
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
-    volumes:
-      - dynamodb_data:/home/dynamodblocal/data
+    ports:
+      - "8000:8000"
 
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     environment:
-      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
-      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-    volumes:
-      - minio_data:/data
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
     ports:
       - "9000:9000"
       - "9001:9001"
-
-volumes:
-  dynamodb_data:
-  minio_data:
