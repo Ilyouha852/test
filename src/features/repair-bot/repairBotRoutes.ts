@@ -4,6 +4,20 @@ import repairBotController from './repairBotController.js';
 
 const router = Router();
 
+router.get('/', 
+  asyncHandler(async (request, response) => {
+    response.json({
+      message: 'Repair Bot API',
+      endpoints: [
+        'POST /sessions/:userId/start - Start session',
+        'POST /sessions/:userId/event - Send event', 
+        'GET /sessions/:userId/state - Get state',
+        'DELETE /sessions/:userId - End session'
+      ]
+    });
+  })
+);
+
 router.post('/sessions/:userId/start', 
   asyncHandler(async (request, response) => {
     const { userId } = request.params;
@@ -15,13 +29,9 @@ router.post('/sessions/:userId/start',
 router.post('/sessions/:userId/event',
   asyncHandler(async (request, response) => {
     const { userId } = request.params;
-    const { type, problem, details } = request.body;
+    const { type } = request.body;
     
-    const result = await repairBotController.sendEvent(userId, {
-      type,
-      problem,
-      details
-    });
+    const result = await repairBotController.sendEvent(userId, { type });
     response.json(result);
   })
 );

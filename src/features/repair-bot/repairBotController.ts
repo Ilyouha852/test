@@ -1,17 +1,13 @@
 import { createActor } from 'xstate';
-import { repairBotMachine } from '../../machines/repairBotMachine.js';
+import { repairBotMachine } from './machines/repairBotMachine.js';
 import stateService from '../../services/stateService.js';
 
 interface SessionResult {
   userId: string;
   currentState: string;
   message: string;
-}
-
-interface StateResult extends SessionResult {
-  history: Array<{ state: string; timestamp: string }>;
-  context: any;
-  message: string; // Добавляем это
+  question?: string;
+  result?: string;
 }
 
 class RepairBotController {
@@ -19,13 +15,16 @@ class RepairBotController {
     const actor = createActor(repairBotMachine);
     actor.start();
     
-    const state = {
+    const initialState = {
       actor,
       context: {},
-      history: []
+      history: [{
+        state: actor.getSnapshot().value as string,
+        timestamp: new Date().toISOString()
+      }]
     };
     
-    stateService.setUserState(userId, state);
+    stateService.setUserState(userId, initialState);
     
     actor.subscribe((snapshot) => {
       const userState = stateService.getUserState(userId);
@@ -38,18 +37,18 @@ class RepairBotController {
       }
     });
 
-    actor.send({ type: 'START' });
-    
     const currentSnapshot = actor.getSnapshot();
+    const meta = this.getMeta(currentSnapshot);
     
     return {
       userId,
       currentState: currentSnapshot.value as string,
-      message: 'Сессия начата!'
+      question: meta.question,
+      message: 'Сессия диагностики начата!'
     };
   }
 
-  async sendEvent(userId: string, event: { type: string; problem?: string; details?: string }): Promise<SessionResult> {
+  async sendEvent(userId: string, event: { type: string }): Promise<SessionResult> {
     const userState = stateService.getUserState(userId);
     
     if (!userState || !userState.actor) {
@@ -59,15 +58,28 @@ class RepairBotController {
     userState.actor.send(event);
     
     const currentSnapshot = userState.actor.getSnapshot();
+    const meta = this.getMeta(currentSnapshot);
     
+    // Если конечное состояние - возвращаем результат
+    if (currentSnapshot.status === 'done') {
+      return {
+        userId,
+        currentState: currentSnapshot.value as string,
+        result: meta.result,
+        message: 'Диагностика завершена!'
+      };
+    }
+    
+    // Если промежуточное состояние - возвращаем вопрос
     return {
       userId,
       currentState: currentSnapshot.value as string,
-      message: `Событие ${event.type} обработано`
+      question: meta.question,
+      message: `Ответ принят`
     };
   }
 
-  async getState(userId: string): Promise<StateResult> {
+  async getState(userId: string): Promise<SessionResult & { history: any[] }> {
     const userState = stateService.getUserState(userId);
     
     if (!userState || !userState.actor) {
@@ -75,12 +87,15 @@ class RepairBotController {
     }
 
     const snapshot = userState.actor.getSnapshot();
+    const meta = this.getMeta(snapshot);
 
     return {
       userId,
       currentState: snapshot.value as string,
+      question: meta.question,
+      result: meta.result,
       history: userState.history,
-      context: snapshot.context
+      message: `Текущее состояние: ${snapshot.value}`
     };
   }
 
@@ -97,6 +112,16 @@ class RepairBotController {
       userId,
       currentState: 'ended',
       message: 'Сессия завершена'
+    };
+  }
+
+  // Вспомогательный метод для извлечения meta данных
+  private getMeta(snapshot: any): { question?: string; result?: string } {
+    const meta = snapshot.getMeta();
+    const stateMeta = meta[Object.keys(meta)[0]];
+    return {
+      question: stateMeta?.question,
+      result: stateMeta?.result
     };
   }
 }
