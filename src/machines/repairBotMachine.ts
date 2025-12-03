@@ -1,72 +1,90 @@
-import { createMachine, assign } from 'xstate';
+import { assign, createMachine } from 'xstate';
 
-type BotEvent = 
-  | { type: 'MOVE' }                    // "Да, двигается"
-  | { type: 'NOT_MOVE' }                // "Нет, не двигается"  
-  | { type: 'YES_SHOULD' }              // "Да, должно"
-  | { type: 'NO_SHOULD' };              // "Нет, не должно"
+export interface BotContext {
+  problem?: string;
+  solution?: string;
+}
+
+type BotEvent =
+  | { type: 'START' }
+  | { type: 'DESCRIBE_PROBLEM'; problem: string }
+  | { type: 'CONFIRM' }
+  | { type: 'NEW_PROBLEM' }
+  | { type: 'FINISH' };
 
 export const repairBotMachine = createMachine({
   id: 'repairBot',
-  initial: 'start',
+  initial: 'idle',
   context: {
-    moves: undefined as boolean | undefined, // Сохраняем ответ на первый вопрос
+    problem: '',
+    solution: '',
   },
   types: {} as {
-    context: { moves: boolean | undefined };
+    context: BotContext;
     events: BotEvent;
   },
   states: {
-    start: {
+    idle: {
       on: {
-        MOVE: {
-          target: 'ask_should_move',
-          actions: assign({ moves: true }) // Запоминаем "двигается"
+        START: {
+          target: 'awaitingProblem',
+          actions: () => console.log('🎯 Переход: idle -> awaitingProblem'),
         },
-        NOT_MOVE: {
-          target: 'ask_should_move', 
-          actions: assign({ moves: false }) // Запоминаем "не двигается"
-        }
       },
-      meta: {
-        question: 'Это двигается?'
-      }
     },
-    ask_should_move: {
+    awaitingProblem: {
+      entry: () => console.log('📝 Вход: awaitingProblem'),
       on: {
-        YES_SHOULD: 'ok', // "Да, должно" → всё ок
-        NO_SHOULD: [
-          {
-            target: 'tape',
-            guard: ({ context }) => context.moves === true // Двигается + не должно = изолента
-          },
-          {
-            target: 'wd40', 
-            guard: ({ context }) => context.moves === false // Не двигается + не должно = WD-40
-          }
-        ]
+        DESCRIBE_PROBLEM: {
+          target: 'solution',
+          actions: [
+            () => console.log('🎯 Переход: awaitingProblem -> solution'),
+            assign({
+              problem: ({ context, event }) => {
+                console.log('📋 Проблема получена:', event.problem);
+                return event.problem;
+              },
+              solution: ({ context, event }) => {
+                const problem = event.problem.toLowerCase();
+                let solution = '';
+
+                if (
+                  problem.includes('скрипит') ||
+                  problem.includes('заедает')
+                ) {
+                  solution = 'WD-40';
+                } else if (
+                  problem.includes('трещит') ||
+                  problem.includes('отваливается')
+                ) {
+                  solution = 'Изолента';
+                } else {
+                  solution = 'WD-40 или изолента';
+                }
+
+                console.log('💡 Решение определено:', solution);
+                return solution;
+              },
+            }),
+          ],
+        },
       },
-      meta: {
-        question: 'А должно?'
-      }
     },
-    wd40: {
-      type: 'final',
-      meta: {
-        result: 'Используй WD-40'
-      }
+    solution: {
+      entry: ({ context }) =>
+        console.log('✅ Вход: solution с контекстом:', context),
+      on: {
+        CONFIRM: 'success',
+        NEW_PROBLEM: 'awaitingProblem',
+        FINISH: 'idle',
+      },
     },
-    tape: {
-      type: 'final',
-      meta: {
-        result: 'Используй изоленту'
-      }
+    success: {
+      entry: () => console.log('🎉 Вход: success'),
+      on: {
+        NEW_PROBLEM: 'awaitingProblem',
+        FINISH: 'idle',
+      },
     },
-    ok: {
-      type: 'final',
-      meta: {
-        result: 'Тогда всё в порядке'
-      }
-    }
-  }
+  },
 });

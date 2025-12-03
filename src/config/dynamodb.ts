@@ -3,6 +3,12 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 const isLocal = process.env.NODE_ENV !== 'production';
 
+console.log('🔧 DynamoDB Configuration:', {
+  isLocal,
+  endpoint: isLocal ? 'http://localhost:8000' : undefined,
+  NODE_ENV: process.env.NODE_ENV,
+});
+
 export const dynamoDBClient = new DynamoDBClient({
   endpoint: isLocal ? 'http://localhost:8000' : undefined,
   region: isLocal ? 'us-east-1' : process.env.AWS_REGION || 'us-east-1',

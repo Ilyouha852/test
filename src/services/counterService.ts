@@ -1,8 +1,5 @@
-import { 
-  GetCommand, 
-  UpdateCommand, 
-  PutCommand 
-} from '@aws-sdk/lib-dynamodb';
+import { GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+
 import { docClient, TABLE_NAME } from '../config/dynamodb.js';
 
 export class CounterService {
@@ -12,14 +9,14 @@ export class CounterService {
         TableName: TABLE_NAME,
         Key: {
           pk: 'COUNTER',
-          sk: 'MAIN'
-        }
+          sk: 'MAIN',
+        },
       });
 
       const result = await docClient.send(command);
       return result.Item?.count || 0;
     } catch (error) {
-      console.error('Error getting counter:', error);
+      console.error('Ошибка получения счетчика:', error);
       return 0;
     }
   }
@@ -30,18 +27,18 @@ export class CounterService {
         TableName: TABLE_NAME,
         Key: {
           pk: 'COUNTER',
-          sk: 'MAIN'
+          sk: 'MAIN',
         },
         UpdateExpression: 'ADD #count :inc SET #updatedAt = :now',
         ExpressionAttributeNames: {
           '#count': 'count',
-          '#updatedAt': 'updatedAt'
+          '#updatedAt': 'updatedAt',
         },
         ExpressionAttributeValues: {
           ':inc': 1,
-          ':now': new Date().toISOString()
+          ':now': new Date().toISOString(),
         },
-        ReturnValues: 'ALL_NEW'
+        ReturnValues: 'ALL_NEW',
       });
 
       const result = await docClient.send(command);
@@ -52,7 +49,7 @@ export class CounterService {
         await this.createCounter();
         return 1;
       }
-      console.error('Error incrementing counter:', error);
+      console.error('Ошибка инкремента счетчика:', error);
       return 0;
     }
   }
@@ -65,13 +62,13 @@ export class CounterService {
           pk: 'COUNTER',
           sk: 'MAIN',
           count: 1,
-          updatedAt: new Date().toISOString()
-        }
+          updatedAt: new Date().toISOString(),
+        },
       });
 
       await docClient.send(command);
     } catch (error) {
-      console.error('Error creating counter:', error);
+      console.error('Ошибка создания счетчика:', error);
     }
   }
 
@@ -83,13 +80,13 @@ export class CounterService {
           pk: 'COUNTER',
           sk: 'MAIN',
           count: 0,
-          updatedAt: new Date().toISOString()
-        }
+          updatedAt: new Date().toISOString(),
+        },
       });
 
       await docClient.send(command);
     } catch (error) {
-      console.error('Error resetting counter:', error);
+      console.error('Ошибка сброса счетчика:', error);
     }
   }
 }

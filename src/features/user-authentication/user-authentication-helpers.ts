@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
 import type { Response } from 'express';
 import type { Request } from 'express';
+import jwt from 'jsonwebtoken';
+
 import type { UserProfile } from '../user-profile/user-profile-model.js';
 
 dotenv.config();
@@ -57,8 +58,8 @@ export function setJwtCookie(response: Response, token: string): void {
 export function verifyJwtToken(token: string): any {
   try {
     return jwt.verify(token, process.env.JWT_SECRET as string);
-  } catch (error) {
-    throw new Error('Invalid or expired token');
+  } catch {
+    throw new Error('Неверный или истекший токен');
   }
 }
 
@@ -76,7 +77,9 @@ export function clearJwtCookie(response: Response) {
 /**
  * Проверяет валидность токена.
  */
-function isTokenValid(token: jwt.JwtPayload | string): token is { id: string; email: string } {
+function isTokenValid(
+  token: jwt.JwtPayload | string,
+): token is { id: string; email: string } {
   return (
     typeof token === 'object' &&
     token !== null &&
@@ -88,11 +91,14 @@ function isTokenValid(token: jwt.JwtPayload | string): token is { id: string; em
 /**
  * Извлекает токен JWT из куки.
  */
-export function getJwtTokenFromCookie(request: Request): { id: string; email: string } {
+export function getJwtTokenFromCookie(request: Request): {
+  id: string;
+  email: string;
+} {
   const token = request.cookies[JWT_COOKIE_NAME];
 
   if (!token) {
-    throw new Error('No token found');
+    throw new Error('Токен не найден');
   }
 
   try {
@@ -101,9 +107,9 @@ export function getJwtTokenFromCookie(request: Request): { id: string; email: st
     if (isTokenValid(decodedToken)) {
       return decodedToken;
     } else {
-      throw new Error('Invalid token payload');
+      throw new Error('Неверная нагрузка токена');
     }
-  } catch (error) {
-    throw new Error('Invalid or expired token'); 
+  } catch {
+    throw new Error('Неверный или истекший токен');
   }
 }

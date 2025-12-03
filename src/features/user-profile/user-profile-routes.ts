@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { asyncHandler } from '../../utils/async-handler.js';
+
 import { requireAuthentication } from '../../middleware/require-authentication.js';
+import { asyncHandler } from '../../utils/async-handler.js';
 import {
   deleteUserProfile,
   getAllUserProfiles,
@@ -16,4 +17,4 @@ router.get('/:id', requireAuthentication, asyncHandler(getUserProfileById));
 router.patch('/:id', requireAuthentication, asyncHandler(updateUserProfile));
 router.delete('/:id', requireAuthentication, asyncHandler(deleteUserProfile));
 
-export { router as userProfileRoutes};
+export { router as userProfileRoutes };

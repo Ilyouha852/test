@@ -1,4 +1,7 @@
-const { DynamoDBClient, ListTablesCommand } = require('@aws-sdk/client-dynamodb');
+const {
+  DynamoDBClient,
+  ListTablesCommand,
+} = require('@aws-sdk/client-dynamodb');
 
 console.log('🔍 Checking DynamoDB connection...');
 
@@ -15,12 +18,14 @@ async function checkConnection() {
   try {
     const command = new ListTablesCommand({});
     const result = await client.send(command);
-    
+
     console.log('✅ DynamoDB connection successful!');
     console.log('📋 Available tables:', result.TableNames);
-    console.log('📍 Endpoint:', process.env.DYNAMODB_ENDPOINT || 'http://localhost:8000');
+    console.log(
+      '📍 Endpoint:',
+      process.env.DYNAMODB_ENDPOINT || 'http://localhost:8000',
+    );
     console.log('🌍 Region:', process.env.DYNAMODB_REGION || 'us-east-1');
-    
   } catch (error) {
     console.error('❌ DynamoDB connection failed:');
     console.error('   Error:', error.message);

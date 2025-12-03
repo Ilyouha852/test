@@ -1,6 +1,7 @@
 import { Router } from 'express';
+
 import { asyncHandler } from '../../utils/async-handler.js';
-import { setCookie, getCookies, clearCookie } from './auth-controller.js';
+import { clearCookie, getCookies, setCookie } from './auth-controller.js';
 
 const router = Router();
 

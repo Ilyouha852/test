@@ -3,8 +3,8 @@ import type { Express } from 'express';
 import express from 'express';
 import morgan from 'morgan';
 
-import { apiV1Router } from './routes.js';
-import { initDynamoDB } from './utils/initDynamoDB.js';
+import { apiV1Router } from './routes.ts';
+import { initDynamoDB } from './utils/initDynamoDB.ts';
 
 export function buildApp(): Express {
   const app = express();
@@ -12,6 +12,7 @@ export function buildApp(): Express {
   app.use(morgan('dev'));
   app.use(express.json());
   app.use(cookieParser());
+
 
   // Инициализируем DynamoDB при запуске приложения
   initDynamoDB().catch(console.error);
@@ -27,14 +28,16 @@ export function buildApp(): Express {
         </head>
         <body>
           <h1>🤖 Support Bot IST</h1>
-          <p>Server is running successfully!</p>
-          <h2>Available endpoints:</h2>
+          <p>Сервер успешно запущен!</p>
+          <h2>Доступные эндпоинты:</h2>
           <ul>
-            <li><a href="/api/v1/health-check">Health Check</a></li>
-            <li><a href="/api/v1/user-profiles">User Profiles</a></li>
-            <li><a href="/api/v1/auth/cookies">Get Cookies</a></li>
-            <li><a href="/api/v1/counter">Counter (DynamoDB Test)</a></li>
-            <li><a href="/api/v1/repair-bot">Repair Bot</a></li>
+            <li><a href="/api/v1/health-check">Проверка здоровья (Health Check)</a></li>
+            <li><a href="/api/v1/user-profiles">Профили пользователей</a></li>
+            <li><a href="/api/v1/auth/cookies">Получить куки</a></li>
+            <li><a href="/api/v1/counter">Счетчик (Тест DynamoDB)</a></li>
+            <li><a href="/api/v1/repair-bot">Бот ремонта</a></li>
+            <li><a href="/api/v1/mainController">Контроллер</a></li>
+
           </ul>
         </body>
       </html>
@@ -45,7 +48,7 @@ export function buildApp(): Express {
 
   // Fallback route для 404
   app.use('*', (req, res) => {
-    res.status(404).json({ error: 'Route not found' });
+    res.status(404).json({ error: 'Маршрут не найден' });
   });
 
   return app;

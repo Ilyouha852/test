@@ -2,14 +2,14 @@ import type { Request, Response } from 'express';
 
 export async function setCookie(request: Request, response: Response) {
   const { name, value } = request.body;
-  
+
   // Устанавливаем куку
-  response.cookie(name, value, { 
+  response.cookie(name, value, {
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 1 день
+    maxAge: 24 * 60 * 60 * 1000, // 1 день
   });
-  
-  response.json({ message: 'Cookie set successfully' });
+
+  response.json({ message: 'Куки успешно установлены' });
 }
 
 export async function getCookies(request: Request, response: Response) {
@@ -19,9 +19,9 @@ export async function getCookies(request: Request, response: Response) {
 
 export async function clearCookie(request: Request, response: Response) {
   const { name } = request.body;
-  
+
   // Очищаем куку
   response.clearCookie(name);
-  
-  response.json({ message: 'Cookie cleared successfully' });
+
+  response.json({ message: 'Куки успешно очищены' });
 }

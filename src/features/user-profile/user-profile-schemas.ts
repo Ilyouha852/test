@@ -8,12 +8,20 @@ export const createUserProfileSchema = z.object({
 
 export const updateUserProfileSchema = z.object({
   email: z.string().email('Invalid email format').optional(),
-  name: z.string().min(1, 'Name is required').max(100, 'Name too long').optional(),
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .max(100, 'Name too long')
+    .optional(),
 });
 
 export const getUserProfilesQuerySchema = z.object({
   page: z.string().transform(Number).pipe(z.number().min(1)).optional(),
-  pageSize: z.string().transform(Number).pipe(z.number().min(1).max(100)).optional(),
+  pageSize: z
+    .string()
+    .transform(Number)
+    .pipe(z.number().min(1).max(100))
+    .optional(),
 });
 
 export const userProfileParamsSchema = z.object({

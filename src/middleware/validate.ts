@@ -15,8 +15,8 @@ export function createValidate(key: 'body' | 'query' | 'params') {
       if (error instanceof ZodError) {
         response
           .status(400)
-          .json({ message: 'Bad Request', errors: error.issues });
-        throw new Error('Validation failed');
+          .json({ message: 'Неверный запрос', errors: error.issues });
+        throw new Error('Ошибка валидации');
       }
       throw error;
     }

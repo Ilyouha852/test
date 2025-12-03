@@ -127,7 +127,7 @@ describe('/api/v1/user-profiles', () => {
           .set('Cookie', [`${JWT_COOKIE_NAME}=${token}`])
           .expect(404);
 
-        expect(actual.body.message).toEqual('Not Found');
+        expect(actual.body.message).toEqual('Не найдено');
       });
     });
 
@@ -171,7 +171,7 @@ describe('/api/v1/user-profiles', () => {
           .send(updates)
           .expect(404);
 
-        expect(actual.body.message).toEqual('Not Found');
+        expect(actual.body.message).toEqual('Не найдено');
       });
     });
 
@@ -209,7 +209,7 @@ describe('/api/v1/user-profiles', () => {
           .set('Cookie', [`${JWT_COOKIE_NAME}=${token}`])
           .expect(404);
 
-        expect(actual.body.message).toEqual('Not Found');
+        expect(actual.body.message).toEqual('Не найдено');
       });
     });
   });

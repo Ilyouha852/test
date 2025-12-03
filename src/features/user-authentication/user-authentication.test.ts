@@ -37,7 +37,7 @@ describe('/api/v1/login', () => {
       .send({ email: userProfile.email, password })
       .expect(200);
 
-    expect(actual.body).toEqual({ message: 'Logged in successfully' });
+    expect(actual.body).toEqual({ message: 'Успешный вход' });
     const cookies = actual.headers['set-cookie'] as unknown as string[];
     expect(cookies).toBeDefined();
     expect(cookies.some(cookie => cookie.includes('jwt='))).toEqual(true);
@@ -50,7 +50,7 @@ describe('/api/v1/login', () => {
       .post('/api/v1/login')
       .send({ email: 'non-existing@test.com', password: 'password' })
       .expect(401);
-    const expected = { message: 'Invalid credentials' };
+    const expected = { message: 'Неверные учетные данные' };
 
     expect(actual).toEqual(expected);
   });
@@ -63,7 +63,7 @@ describe('/api/v1/login', () => {
       .send({ email: userProfile.email, password: 'invalid password' })
       .expect(401);
 
-    expect(actual.body).toEqual({ message: 'Invalid credentials' });
+    expect(actual.body).toEqual({ message: 'Неверные учетные данные' });
   });
 
   test('дано: невалидные данные, ожидается: возврат статуса 400', async () => {
@@ -74,7 +74,7 @@ describe('/api/v1/login', () => {
       .send({})
       .expect(400);
 
-    expect(actual.message).toEqual('Bad Request');
+    expect(actual.message).toEqual('Неверный запрос');
     expect(actual.errors).toBeDefined();
   });
 });
@@ -91,13 +91,13 @@ describe('/api/v1/register', () => {
       .send({ email, password, name })
       .expect(201);
 
-    expect(actual).toEqual({ 
-      message: 'User registered successfully',
-      user: { 
+    expect(actual).toEqual({
+      message: 'Пользователь успешно зарегистрирован',
+      user: {
         id: expect.any(String),
         email: email,
-        name: name
-      }
+        name: name,
+      },
     });
 
     // Проверяем запись пользователя в БД
@@ -117,10 +117,14 @@ describe('/api/v1/register', () => {
 
     const { body: actual } = await request(app)
       .post('/api/v1/register')
-      .send({ email: userProfile.email, password: 'newpassword123', name: 'New User' })
+      .send({
+        email: userProfile.email,
+        password: 'newpassword123',
+        name: 'New User',
+      })
       .expect(409);
 
-    expect(actual).toEqual({ message: 'User already exists' });
+    expect(actual).toEqual({ message: 'Пользователь уже существует' });
   });
 
   test('дано: невалидные данные для регистрации, ожидается: возврат статуса 400', async () => {
@@ -131,7 +135,7 @@ describe('/api/v1/register', () => {
       .send({})
       .expect(400);
 
-    expect(actual.message).toEqual('Bad Request');
+    expect(actual.message).toEqual('Неверный запрос');
     expect(actual.errors).toBeDefined();
   });
 });
@@ -142,7 +146,7 @@ describe('/api/v1/logout', () => {
 
     const response = await request(app).post('/api/v1/logout').expect(200);
 
-    expect(response.body).toEqual({ message: 'Logged out successfully' });
+    expect(response.body).toEqual({ message: 'Успешный выход' });
 
     // Проверяем очистку куки
     const cookies = response.headers['set-cookie'] as unknown as string[];
