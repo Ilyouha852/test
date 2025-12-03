@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { createId } from '@paralleldrive/cuid2';
+
 import type { Factory } from '../../utils/types.js';
 import type { UserProfile } from './user-profile-model.js';
 

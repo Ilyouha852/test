@@ -35,7 +35,7 @@ export async function saveUserProfileToDatabase(
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-  
+
   mockUserProfiles.push(newProfile);
   return newProfile;
 }
@@ -44,13 +44,15 @@ export async function saveUserProfileToDatabase(
 export async function retrieveUserProfileFromDatabaseById(
   id: string,
 ): Promise<UserProfile | null> {
-  return mockUserProfiles.find(profile => profile.id === id) || null;
+  const profile = mockUserProfiles.find(profile => profile.id === id);
+  return profile ?? null;
 }
 
 export async function retrieveUserProfileFromDatabaseByEmail(
   email: string,
 ): Promise<UserProfile | null> {
-  return mockUserProfiles.find(profile => profile.email === email) || null;
+  const profile = mockUserProfiles.find(profile => profile.email === email);
+  return profile ?? null;
 }
 
 export async function retrieveManyUserProfilesFromDatabase({
@@ -76,20 +78,28 @@ export async function updateUserProfileInDatabaseById({
 }): Promise<UserProfile | null> {
   const index = mockUserProfiles.findIndex(profile => profile.id === id);
   if (index === -1) return null;
-  
-  mockUserProfiles[index] = {
-    ...mockUserProfiles[index],
-    ...data,
+
+  const existing = mockUserProfiles[index]!; // Safe because we checked index !== -1
+  const updated: UserProfile = {
+    id: existing.id,
+    email: data.email ?? existing.email,
+    name: data.name ?? existing.name,
+    hashedPassword: data.hashedPassword ?? existing.hashedPassword,
+    createdAt: existing.createdAt,
     updatedAt: new Date(),
   };
-  
-  return mockUserProfiles[index];
+
+  mockUserProfiles[index] = updated;
+  return updated;
 }
 
 /* DELETE */
-export async function deleteUserProfileFromDatabaseById(id: string): Promise<UserProfile | null> {
+export async function deleteUserProfileFromDatabaseById(
+  id: string,
+): Promise<UserProfile | null> {
   const index = mockUserProfiles.findIndex(profile => profile.id === id);
   if (index === -1) return null;
-  
-  return mockUserProfiles.splice(index, 1)[0];
+
+  const profile = mockUserProfiles.splice(index, 1)[0];
+  return profile ?? null;
 }

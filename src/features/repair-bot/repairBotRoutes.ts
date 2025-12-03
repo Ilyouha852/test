@@ -1,55 +1,57 @@
 import { Router } from 'express';
+
 import { asyncHandler } from '../../utils/async-handler.js';
 import repairBotController from './repairBotController.js';
 
 const router = Router();
 
-router.get('/', 
+router.post(
+  '/sessions/:userId/start',
   asyncHandler(async (request, response) => {
-    response.json({
-      message: 'Repair Bot API',
-      endpoints: [
-        'POST /sessions/:userId/start - Start session',
-        'POST /sessions/:userId/event - Send event', 
-        'GET /sessions/:userId/state - Get state',
-        'DELETE /sessions/:userId - End session'
-      ]
-    });
-  })
-);
-
-router.post('/sessions/:userId/start', 
-  asyncHandler(async (request, response) => {
-    const { userId } = request.params;
+    const userId = request.params.userId as string;
     const result = await repairBotController.startSession(userId);
     response.json(result);
-  })
+  }),
 );
 
-router.post('/sessions/:userId/event',
+router.post(
+  '/sessions/:userId/event',
   asyncHandler(async (request, response) => {
-    const { userId } = request.params;
-    const { type } = request.body;
-    
-    const result = await repairBotController.sendEvent(userId, { type });
+    const userId = request.params.userId as string;
+    const { type, problem, details } = request.body as {
+      type: string;
+      problem?: string;
+      details?: string;
+    };
+
+    // Create event object without undefined values
+    const event: { type: string; problem?: string; details?: string } = {
+      type,
+    };
+    if (problem !== undefined) event.problem = problem;
+    if (details !== undefined) event.details = details;
+
+    const result = await repairBotController.sendEvent(userId, event);
     response.json(result);
-  })
+  }),
 );
 
-router.get('/sessions/:userId/state',
+router.get(
+  '/sessions/:userId/state',
   asyncHandler(async (request, response) => {
-    const { userId } = request.params;
+    const userId = request.params.userId as string;
     const result = await repairBotController.getState(userId);
     response.json(result);
-  })
+  }),
 );
 
-router.delete('/sessions/:userId',
+router.delete(
+  '/sessions/:userId',
   asyncHandler(async (request, response) => {
-    const { userId } = request.params;
+    const userId = request.params.userId as string;
     const result = await repairBotController.endSession(userId);
     response.json(result);
-  })
+  }),
 );
 
 export default router;

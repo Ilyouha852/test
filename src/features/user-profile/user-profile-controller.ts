@@ -1,7 +1,12 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
+
 import { requireAuthentication } from '../../middleware/require-authentication.js';
-import { validateBody, validateParams, validateQuery } from '../../middleware/validate.js';
+import {
+  validateBody,
+  validateParams,
+  validateQuery,
+} from '../../middleware/validate.js';
 import { getErrorMessage } from '../../utils/get-error-message.js';
 import {
   deleteUserProfileFromDatabaseById,
@@ -41,7 +46,7 @@ export async function getUserProfileById(request: Request, response: Response) {
   if (profile) {
     response.status(200).json(profile);
   } else {
-    response.status(404).json({ message: 'Not Found' });
+    response.status(404).json({ message: 'Не найдено' });
   }
 }
 
@@ -63,20 +68,25 @@ export async function updateUserProfile(request: Request, response: Response) {
   );
 
   if (Object.keys(body).length === 0) {
-    response.status(400).json({ message: 'No valid fields to update' });
+    response.status(400).json({ message: 'Нет валидных полей для обновления' });
     return;
   }
 
   try {
+    // Filter out undefined values for exactOptionalPropertyTypes
+    const updateData: { email?: string; name?: string } = {};
+    if (body.email !== undefined) updateData.email = body.email;
+    if (body.name !== undefined) updateData.name = body.name;
+
     const updatedProfile = await updateUserProfileInDatabaseById({
       id,
-      data: body,
+      data: updateData,
     });
-    
+
     if (updatedProfile) {
       response.status(200).json(updatedProfile);
     } else {
-      response.status(404).json({ message: 'Not Found' });
+      response.status(404).json({ message: 'Не найдено' });
     }
   } catch (error) {
     const message = getErrorMessage(error);
@@ -94,11 +104,11 @@ export async function deleteUserProfile(request: Request, response: Response) {
 
   try {
     const deletedProfile = await deleteUserProfileFromDatabaseById(id);
-    
+
     if (deletedProfile) {
       response.status(200).json(deletedProfile);
     } else {
-      response.status(404).json({ message: 'Not Found' });
+      response.status(404).json({ message: 'Не найдено' });
     }
   } catch (error) {
     const message = getErrorMessage(error);

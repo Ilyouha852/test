@@ -1,18 +1,25 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
+
 import { verifyJwtToken } from '../features/user-authentication/user-authentication-helpers.js';
 
-export function authenticateToken(request: Request, response: Response, next: NextFunction) {
+export function authenticateToken(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) {
   const token = request.cookies.jwt;
 
   if (!token) {
-    return response.status(401).json({ message: 'Authentication required' });
+    return response.status(401).json({ message: 'Требуется аутентификация' });
   }
 
   try {
     const decoded = verifyJwtToken(token);
     (request as any).user = decoded; // Добавляем пользователя в request
     next();
-  } catch (error) {
-    return response.status(403).json({ message: 'Invalid or expired token' });
+  } catch {
+    return response
+      .status(403)
+      .json({ message: 'Неверный или истекший токен' });
   }
 }

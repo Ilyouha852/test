@@ -20,7 +20,6 @@ async function testDynamoDB() {
     console.log('   ✅ Final count:', finalCount);
 
     console.log('🎉 DynamoDB test completed successfully!');
-
   } catch (error) {
     console.error('❌ DynamoDB test failed:', error);
   }
