@@ -57,7 +57,7 @@ export async function createAppeal(input: AppealCreateInput): Promise<Appeal> {
         appealSoftwareId: input.appealSoftwareId,
         appealStatusId: input.appealStatusId,
         appealCriticalityId: input.appealCriticalityId,
-        solutionId: input.solutionId,
+        ...(input.solutionId ? { solutionId: input.solutionId } : {}),
     };
 
     await putItem(TABLE_NAMES.APPEALS, appeal);

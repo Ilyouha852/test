@@ -3,7 +3,6 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 const isLocal = process.env.NODE_ENV !== 'production';
 
-// Prioritize environment variables for configuration
 const endpoint = process.env.DYNAMODB_ENDPOINT || (isLocal ? 'http://localhost:8000' : undefined);
 const region = process.env.DYNAMODB_REGION || process.env.AWS_REGION || 'us-east-1';
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID || (isLocal ? 'fake' : undefined);
@@ -24,10 +23,9 @@ export const dynamoDBClient = new DynamoDBClient({
   },
 } as any);
 
-// ИСПРАВЛЕНИЕ: Добавьте marshallOptions с removeUndefinedValues
 export const docClient = DynamoDBDocumentClient.from(dynamoDBClient, {
   marshallOptions: {
-    removeUndefinedValues: true, // <-- ВАЖНО: удаляет undefined значения
+    removeUndefinedValues: true,
     convertClassInstanceToMap: true,
   },
   unmarshallOptions: {
