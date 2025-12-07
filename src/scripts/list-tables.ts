@@ -1,11 +1,12 @@
+import 'dotenv/config';
 import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb';
 
 const dynamodb = new DynamoDBClient({
-  endpoint: 'http://localhost:8000',
-  region: 'us-east-1',
+  endpoint: process.env.DYNAMODB_ENDPOINT || 'http://localhost:8000',
+  region: process.env.DYNAMODB_REGION || 'us-east-1',
   credentials: {
-    accessKeyId: 'fake',
-    secretAccessKey: 'fake',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'fake',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'fake',
   },
 });
 

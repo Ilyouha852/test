@@ -53,12 +53,21 @@ async function testFullFlow() {
         const newKey = dbResult.Item.attachments[0];
 
         // Инициализируем клиент для проверки (так как s3Service не экспортирует клиент)
+        const minioEndpoint = process.env.MINIO_ENDPOINT || 'localhost';
+        const minioPort = process.env.MINIO_PORT ? Number(process.env.MINIO_PORT) : 9000;
+        const minioUseSSL = process.env.MINIO_USE_SSL === 'true';
+        const protocol = minioUseSSL ? 'https://' : 'http://';
+
+        const endpoint = process.env.MINIO_ENDPOINT?.startsWith('http')
+          ? process.env.MINIO_ENDPOINT
+          : `${protocol}${minioEndpoint}:${minioPort}`;
+
         const s3Check = new S3Client({
-          endpoint: process.env.MINIO_ENDPOINT || 'http://localhost:9000',
-          region: 'us-east-1',
+          endpoint,
+          region: process.env.MINIO_REGION || 'us-east-1',
           credentials: {
-            accessKeyId: process.env.MINIO_ACCESS_KEY || '',
-            secretAccessKey: process.env.MINIO_SECRET_KEY || '',
+            accessKeyId: process.env.MINIO_ACCESS_KEY || 'minioadmin',
+            secretAccessKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
           },
           forcePathStyle: true,
         });

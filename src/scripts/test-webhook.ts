@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 async function testWebhook() {
-  const url = 'http://localhost:3007/api/v1/webhook';
+  const port = process.env.PORT || 3007;
+  const host = process.env.API_HOST || 'localhost';
+  const protocol = process.env.API_PROTOCOL || 'http';
+  const url = process.env.WEBHOOK_TEST_URL || `${protocol}://${host}:${port}/api/v1/webhook`;
   const appealId = 'APPEAL-TEST-001';
 
   console.log('🚀 Запуск теста вебхука');

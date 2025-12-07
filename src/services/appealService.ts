@@ -28,6 +28,7 @@ export async function listRequestsForUser(
     process.env.DYNAMO_TABLE || process.env.DYNAMO_TABLE_NAME || 'Appeals';
 
   const params = {
+    removeUndefinedValues: true,
     TableName: table,
     IndexName: 'status-createdAt-index',
     KeyConditionExpression: '#status = :inProgress',
