@@ -22,7 +22,7 @@ async function testFullWebhookCycle() {
     messengerAggregator.registerConnector(mockConnector);
 
     const webServer = new WebServer(messengerAggregator);
-    const port = 3008; // Use different port for testing
+    const port = Number(process.env.BOT_PORT) || 3008; // Use different port for testing
     webServer.start(port);
     console.log(`✅ WebServer started on port ${port}`);
 

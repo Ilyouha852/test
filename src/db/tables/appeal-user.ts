@@ -24,7 +24,7 @@ export async function createAppealUser(
         throw new Error('Invalid foreign key reference');
     }
 
-    const id = createEntityId('APPEALUSER', createId());
+    const id = createEntityId('APPEAL_USER', createId());
     const sk = `${input.userId}#RELATION#${input.relationId}`;
 
     const appealUser: AppealUser = {

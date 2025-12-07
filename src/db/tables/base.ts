@@ -12,7 +12,7 @@ import { docClient } from '../dynamodb.js';
 import { METADATA_SK } from '../types.js';
 
 // Generic Get Item
-export async function getItem<T>(
+export async function getItem<T extends Record<string, any>>(
     tableName: string,
     id: string,
     sk: string = METADATA_SK,
@@ -27,7 +27,7 @@ export async function getItem<T>(
 }
 
 // Generic Put Item
-export async function putItem<T>(tableName: string, item: T): Promise<T> {
+export async function putItem<T extends Record<string, any>>(tableName: string, item: T): Promise<T> {
     await docClient.send(
         new PutCommand({
             TableName: tableName,

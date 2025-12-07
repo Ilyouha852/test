@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:3007/api/v1/repair-bot';
+const port = process.env.PORT || 3007;
+const host = process.env.API_HOST || 'localhost';
+const protocol = process.env.API_PROTOCOL || 'http';
+const API_BASE = process.env.API_URL || `${protocol}://${host}:${port}/api/v1/repair-bot`;
 
 async function runRepairBotTests() {
   console.log('🧪 Starting Repair Bot API Tests...\n');

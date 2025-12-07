@@ -3,8 +3,8 @@ import type { Express } from 'express';
 import express from 'express';
 import morgan from 'morgan';
 
-import { apiV1Router } from './routes.ts';
-import { initDynamoDB } from './utils/initDynamoDB.ts';
+import { apiV1Router } from './routes.js';
+import { initDynamoDB } from './utils/initDynamoDB.js';
 
 export function buildApp(): Express {
   const app = express();
