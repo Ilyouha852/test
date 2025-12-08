@@ -26,4 +26,4 @@ RUN echo "NODE_ENV=production" > .env && \
 
 EXPOSE 3007
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
