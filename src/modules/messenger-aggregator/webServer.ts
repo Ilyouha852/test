@@ -9,13 +9,15 @@ export class WebServer {
     private server: http.Server;
     private messengerAggregator: MessengerAggregator;
     private mainBotController: MainBotController;
+    private baseUrl: string; // Добавляем поле для хранения URL
     public isMessageReceived: boolean = false;
     private messageReceivedPromise: Promise<void>;
     private resolveMessageReceived: (() => void) | null = null;
 
-    constructor(messengerAggregator: MessengerAggregator) {
+    constructor(messengerAggregator: MessengerAggregator, baseUrl?: string) {
         this.messengerAggregator = messengerAggregator;
         this.mainBotController = new MainBotController(messengerAggregator);
+        this.baseUrl = baseUrl || ''; // Сохраняем переданный URL
         this.app = express();
         this.server = http.createServer(this.app);
         this.messageReceivedPromise = new Promise((resolve) => {
@@ -60,8 +62,15 @@ export class WebServer {
 
     public start(port: number): void {
         this.server.listen(port, () => {
-            console.log('Веб-сервер запущен на порту ' + port);
+            const actualUrl = this.baseUrl || `http://localhost:${port}`;
+            console.log(` Веб-сервер бота запущен по адресу: ${actualUrl}`);
+            console.log(`   - Endpoint: ${actualUrl}/user_message`);
         });
+    }
+
+    // Метод для получения полного URL эндпоинта (если нужен для логирования/отладки)
+    public getWebhookUrl(): string {
+        return `${this.baseUrl || 'http://localhost:' + (process.env.BOT_PORT || 3008)}/user_message`;
     }
 
     // Ожидание первого сообщения

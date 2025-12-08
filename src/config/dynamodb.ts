@@ -1,5 +1,14 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
+
+// Проверяем загруженные переменные
+console.log('🔍 Проверка переменных окружения:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DYNAMODB_ENDPOINT:', process.env.DYNAMODB_ENDPOINT);
+console.log('DYNAMODB_REGION:', process.env.DYNAMODB_REGION);
 
 const isLocal = process.env.NODE_ENV !== 'production';
 
