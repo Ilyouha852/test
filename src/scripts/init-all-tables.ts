@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { CreateTableCommand } from '@aws-sdk/client-dynamodb';
 
-import { dynamoDBClient } from '../db/dynamodb.ts';
-import { TABLE_NAMES } from '../db/types.ts';
+import { dynamoDBClient } from '../db/dynamodb.js';
+import { TABLE_NAMES } from '../db/types.js';
 
 // Table definitions with GSIs
 const tableDefinitions = [
