@@ -3,7 +3,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install
 
 COPY . .
 
@@ -26,4 +26,4 @@ RUN echo "NODE_ENV=production" > .env && \
 
 EXPOSE 3007
 
-CMD ["node", "dist/index.js"]
+CMD ["npm", "run", "dev"]
