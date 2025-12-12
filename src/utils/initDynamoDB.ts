@@ -1,5 +1,4 @@
 import { CreateTableCommand } from '@aws-sdk/client-dynamodb';
-
 import { dynamoDBClient, TABLE_NAME } from '../config/dynamodb.js';
 
 export async function initDynamoDB() {
@@ -10,14 +9,22 @@ export async function initDynamoDB() {
       TableName: TABLE_NAME,
       AttributeDefinitions: [
         {
-          AttributeName: 'id',
+          AttributeName: 'pk',  // ← МЕНЯЕМ id на pk
+          AttributeType: 'S',
+        },
+        {
+          AttributeName: 'sk',  // ← ДОБАВЛЯЕМ sk
           AttributeType: 'S',
         },
       ],
       KeySchema: [
         {
-          AttributeName: 'id',
+          AttributeName: 'pk',  // ← МЕНЯЕМ id на pk
           KeyType: 'HASH',
+        },
+        {
+          AttributeName: 'sk',  // ← ДОБАВЛЯЕМ RANGE ключ
+          KeyType: 'RANGE',
         },
       ],
       BillingMode: 'PAY_PER_REQUEST',
