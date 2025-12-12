@@ -7,7 +7,6 @@ import { MockConnector } from './modules/messenger-aggregator/connectors/MockCon
 import { WebServer } from './modules/messenger-aggregator/webServer.js';
 
 const port: number = Number(process.env.PORT) || 3007;
-
 const botBaseUrl: string = process.env.BOT_BASE_URL || `${process.env.PROTOCOL || 'http'}://${process.env.HOST || 'localhost'}:${process.env.BOT_PORT || 3007}`;
 const botPort: number = Number(process.env.BOT_PORT) || 3007;
 
