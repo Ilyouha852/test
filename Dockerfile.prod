@@ -26,6 +26,4 @@ RUN echo "NODE_ENV=production" > .env && \
 
 EXPOSE 3007
 
-CMD ["npm", "run", "dev"]
-CMD ["cd", "dist/scripts"]
-CMD ["node", "init-all-tables.js"]
+CMD cd dist/scripts && node init-all-tables.js && cd /app && npm run dev
