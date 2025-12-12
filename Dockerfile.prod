@@ -7,10 +7,8 @@ RUN npm install
 
 COPY . .
 
-# Собираем TypeScript
 RUN npm run build
 
-# Создаём .env файл с production переменными
 RUN echo "NODE_ENV=production" > .env && \
     echo "PORT=3007" >> .env && \
     echo "DYNAMODB_TABLE=support-bot-table" >> .env && \
