@@ -95,19 +95,47 @@ class MainBotController {
             console.log(`📤 Sending event to machine:`, event);
             actor.send(event);
 
-            // // Шаг 3: Получить текущее состояние
-            // const currentState = actor.getSnapshot();
-            // const stateValue =
-            //     typeof currentState.value === 'string'
-            //         ? currentState.value
-            //         : JSON.stringify(currentState.value);
+            // Шаг 3: Дождаться стабилизации состояния (для async invoke)
+            // Ждём изменения состояния или таймаут 5 секунд
+            const initialState = actor.getSnapshot();
+            const initialValue = JSON.stringify(initialState.value);
 
-            // console.log(`📍 Current state after event: ${stateValue}`);
+            await new Promise<void>((resolve) => {
+                let resolved = false;
 
-            // // Шаг 4: Сохранить обновленный снимок в БД
-            // await stateService.saveUserSnapshot(userId, actor, 'appealRoot');
+                const subscription = actor.subscribe((snapshot: any) => {
+                    const currentValue = JSON.stringify(snapshot.value);
+                    // Если состояние изменилось и нет активных дочерних машин
+                    if (currentValue !== initialValue && !resolved) {
+                        resolved = true;
+                        subscription.unsubscribe();
+                        // Даём небольшую задержку для завершения всех side effects
+                        setTimeout(() => resolve(), 50);
+                    }
+                });
 
-            // console.log(`✅ Message processed successfully for user ${userId}\\n`);
+                // Таймаут 5 секунд (для долгих DynamoDB операций)
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        subscription.unsubscribe();
+                        resolve();
+                    }
+                }, 5000);
+            });
+            // Шаг 4: Получить текущее состояние
+            const currentState = actor.getSnapshot();
+            const stateValue =
+                typeof currentState.value === 'string'
+                    ? currentState.value
+                    : JSON.stringify(currentState.value);
+
+            console.log(`📍 Current state after event: ${stateValue}`);
+
+            // Шаг 5: Сохранить обновленный снимок в БД
+            await stateService.saveUserSnapshot(userId, actor, 'appealRoot');
+
+            console.log(`✅ Message processed successfully for user ${userId}\\n`);
         } catch (error) {
             console.error(
                 `❌ Error processing message for user ${userId}:`,
@@ -160,6 +188,16 @@ class MainBotController {
             'BACK': { type: 'BACK' },
             'ПОМОЩЬ': { type: 'HELP' },
             'HELP': { type: 'HELP' },
+            'ADD_DESCRIPTION': { type: 'ADD_DESCRIPTION' },
+            'SELECT_CATEGORY': { type: 'SELECT_CATEGORY' },
+            'CHOOSE_SOFTWARE': { type: 'CHOOSE_SOFTWARE' },
+            'SET_CRITICALITY': { type: 'SET_CRITICALITY' },
+            'ATTACH_FILE': { type: 'ATTACH_FILE' },
+            'STOP_ATTACHING': { type: 'STOP_ATTACHING' },
+            'CONFIRM_CREATION': { type: 'CONFIRM_CREATION' },
+            'CANCEL_CREATION': { type: 'CANCEL_CREATION' },
+            'CONFIRM_FIXATION': { type: 'CONFIRM_FIXATION' },
+            'CANCEL_FIXATION': { type: 'CANCEL_FIXATION' }
         };
 
         // Проверить, является ли это прямой командой

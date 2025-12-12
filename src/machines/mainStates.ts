@@ -1,4 +1,4 @@
-import { assign, createMachine } from 'xstate';
+import { assign, createMachine, forwardTo } from 'xstate';
 
 import { appealCreateMachine } from './masterCreateAppeal.js';
 import { appealJoinMachine } from './masterJoinAppeal.js';
@@ -22,7 +22,19 @@ export type AppealRootEvent =
   | { type: 'JOIN_APPEAL' }
   | { type: 'BACK' }
   | { type: 'CREATION_RESULT'; result: 'created' | 'cancelled' }
-  | { type: 'HELP' };
+  | { type: 'HELP' }
+  // События для пересылки в дочернюю машину создания обращения
+  | { type: 'ADD_DESCRIPTION'; description?: string }
+  | { type: 'SELECT_CATEGORY'; category?: string }
+  | { type: 'CHOOSE_SOFTWARE'; software?: string }
+  | { type: 'SET_CRITICALITY'; criticality?: string }
+  | { type: 'ATTACH_FILE'; fileId?: string }
+  | { type: 'STOP_ATTACHING' }
+  | { type: 'CONFIRM_CREATION' }
+  | { type: 'CANCEL_CREATION' }
+  | { type: 'CONFIRM_FIXATION' }
+  | { type: 'CANCEL_FIXATION' }
+  | { type: 'TEXT_INPUT'; text: string };
 
 /**
  * Корневая машина, объединяющая создание и присоединение к обращениям
@@ -119,6 +131,19 @@ export const appealRootMachine = createMachine(
           ],
         },
         on: {
+          /** Пересылаем все события дочерней машине */
+          ADD_DESCRIPTION: { actions: forwardTo('appealCreateMachine') },
+          SELECT_CATEGORY: { actions: forwardTo('appealCreateMachine') },
+          CHOOSE_SOFTWARE: { actions: forwardTo('appealCreateMachine') },
+          SET_CRITICALITY: { actions: forwardTo('appealCreateMachine') },
+          ATTACH_FILE: { actions: forwardTo('appealCreateMachine') },
+          STOP_ATTACHING: { actions: forwardTo('appealCreateMachine') },
+          CONFIRM_CREATION: { actions: forwardTo('appealCreateMachine') },
+          CANCEL_CREATION: { actions: forwardTo('appealCreateMachine') },
+          CONFIRM_FIXATION: { actions: forwardTo('appealCreateMachine') },
+          CANCEL_FIXATION: { actions: forwardTo('appealCreateMachine') },
+          BACK: { actions: forwardTo('appealCreateMachine') },
+          TEXT_INPUT: { actions: forwardTo('appealCreateMachine') },
           /** Дополнительный fallback — если событие придёт напрямую */
           CREATION_RESULT: [
             {

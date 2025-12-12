@@ -1,7 +1,6 @@
 import { QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
-import { docClient } from '../config/dynamodb.js';
-import { TABLE_NAMES } from '../db/types.js';
+import { docClient, TABLE_NAME } from '../config/dynamodb.js';
 
 export interface Appeal {
   id: string;
@@ -25,8 +24,7 @@ export async function listRequestsForUser(
   if (!currentUserId)
     return 'Необходимо авторизоваться, чтобы увидеть обращения.';
 
-  const table =
-    TABLE_NAMES.APPEALS;
+  const table = TABLE_NAME;
 
   const params = {
     removeUndefinedValues: true,

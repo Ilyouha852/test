@@ -1,4 +1,5 @@
-import { assign, createMachine, sendParent } from 'xstate';
+import { assign, createMachine, sendParent, fromPromise } from 'xstate';
+import { createAppeal } from '../services/dynamoService.js';
 
 export interface AppealCreateContext {
   userId: string | null;
@@ -21,7 +22,8 @@ export type AppealCreateEvent =
   | { type: 'CONFIRM_FIXATION' }
   | { type: 'CANCEL_FIXATION' }
   | { type: 'BACK' }
-  | { type: 'HELP' };
+  | { type: 'HELP' }
+  | { type: 'TEXT_INPUT'; text: string };
 
 export const appealCreateMachine = createMachine(
   {
@@ -78,6 +80,10 @@ export const appealCreateMachine = createMachine(
       waitingDescription: {
         entry: 'promptDescription',
         on: {
+          TEXT_INPUT: {
+            target: 'manageAppeal',
+            actions: 'saveDescriptionFromTextInput',
+          },
           BACK: { target: 'manageAppeal' },
           HELP: { actions: 'showHelp' },
         },
@@ -86,6 +92,10 @@ export const appealCreateMachine = createMachine(
       chooseCategory: {
         entry: 'promptCategory',
         on: {
+          TEXT_INPUT: {
+            target: 'manageAppeal',
+            actions: 'saveCategoryFromTextInput',
+          },
           BACK: { target: 'manageAppeal' },
           HELP: { actions: 'showHelp' },
         },
@@ -94,6 +104,10 @@ export const appealCreateMachine = createMachine(
       waitingSoftware: {
         entry: 'promptSoftware',
         on: {
+          TEXT_INPUT: {
+            target: 'manageAppeal',
+            actions: 'saveSoftwareFromTextInput',
+          },
           BACK: { target: 'manageAppeal' },
           HELP: { actions: 'showHelp' },
         },
@@ -102,6 +116,10 @@ export const appealCreateMachine = createMachine(
       waitingCriticality: {
         entry: 'promptCriticality',
         on: {
+          TEXT_INPUT: {
+            target: 'manageAppeal',
+            actions: 'saveCriticalityFromTextInput',
+          },
           BACK: { target: 'manageAppeal' },
           HELP: { actions: 'showHelp' },
         },
@@ -120,11 +138,45 @@ export const appealCreateMachine = createMachine(
         entry: 'showAppealPreview',
         on: {
           CONFIRM_FIXATION: {
-            target: 'created',
-            actions: 'notifyParentCreated',
+            target: 'savingAppeal',
           },
           CANCEL_FIXATION: { target: 'manageAppeal' },
           HELP: { actions: 'showHelp' },
+        },
+      },
+
+      /** Сохранение обращения в БД */
+      savingAppeal: {
+        entry: () => console.log('💾 Сохранение обращения в базу данных...'),
+        invoke: {
+          id: 'saveAppeal',
+          src: fromPromise(async ({ input }) => {
+            const appealId = await createAppeal({
+              userId: input.userId,
+              description: input.description,
+              category: input.category,
+              software: input.software,
+              criticality: input.criticality,
+              attachments: input.attachments,
+            });
+            return appealId;
+          }),
+          input: ({ context }) => ({
+            userId: context.userId,
+            description: context.description,
+            category: context.category,
+            software: context.software,
+            criticality: context.criticality,
+            attachments: context.attachments,
+          }),
+          onDone: {
+            target: 'created',
+            actions: ['logAppealCreated', 'notifyParentCreated'],
+          },
+          onError: {
+            target: 'manageAppeal',
+            actions: 'logSaveError',
+          },
         },
       },
 
@@ -150,6 +202,10 @@ export const appealCreateMachine = createMachine(
             ? event.description
             : context.description,
       }),
+      saveDescriptionFromTextInput: assign({
+        description: ({ event }) =>
+          event.type === 'TEXT_INPUT' ? event.text : '',
+      }),
 
       promptCategory: () => console.log('📂 Выберите категорию обращения...'),
       saveCategoryFromEvent: assign({
@@ -157,6 +213,10 @@ export const appealCreateMachine = createMachine(
           event.type === 'SELECT_CATEGORY' && event.category
             ? event.category
             : context.category,
+      }),
+      saveCategoryFromTextInput: assign({
+        category: ({ event }) =>
+          event.type === 'TEXT_INPUT' ? event.text : '',
       }),
 
       promptSoftware: () =>
@@ -167,6 +227,10 @@ export const appealCreateMachine = createMachine(
             ? event.software
             : context.software,
       }),
+      saveSoftwareFromTextInput: assign({
+        software: ({ event }) =>
+          event.type === 'TEXT_INPUT' ? event.text : '',
+      }),
 
       promptCriticality: () => console.log('⚠️ Укажите степень критичности...'),
       saveCriticalityFromEvent: assign({
@@ -174,6 +238,10 @@ export const appealCreateMachine = createMachine(
           event.type === 'SET_CRITICALITY' && event.criticality
             ? event.criticality
             : context.criticality,
+      }),
+      saveCriticalityFromTextInput: assign({
+        criticality: ({ event }) =>
+          event.type === 'TEXT_INPUT' ? event.text : '',
       }),
 
       promptAttachments: () => console.log('📎 Прикрепите файлы...'),
@@ -187,12 +255,29 @@ export const appealCreateMachine = createMachine(
       showAppealPreview: ({ context }) => {
         console.log('📌 Предпросмотр обращения:');
         console.log(`🧑 Пользователь: ${context.userId ?? '—'}`);
+        console.log(`📝 Описание: ${context.description || '(не указано)'}`);
+        console.log(`📂 Категория: ${context.category || '(не указана)'}`);
+        console.log(`💻 ПО: ${context.software || '(не указано)'}`);
+        console.log(`⚠️ Критичность: ${context.criticality || '(не указана)'}`);
+        console.log(`📎 Вложений: ${context.attachments?.length || 0}`);
+        console.log('');
+        console.log('→ [CONFIRM_FIXATION] — подтвердить и создать');
+        console.log('→ [CANCEL_FIXATION] — вернуться к редактированию');
       },
 
       notifyParentCreated: sendParent(() => ({
         type: 'CREATION_RESULT',
         result: 'created' as const,
       })),
+
+      logAppealCreated: ({ event }) => {
+        const appealId = (event as any).output;
+        console.log(`✅ Обращение ${appealId} успешно сохранено!`);
+      },
+
+      logSaveError: ({ event }) => {
+        console.error('❌ Ошибка при сохранении обращения:', (event as any).error);
+      },
 
       notifyParentCancelled: sendParent(() => ({
         type: 'CREATION_RESULT',
