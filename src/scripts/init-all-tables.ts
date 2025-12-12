@@ -346,6 +346,31 @@ const tableDefinitions = [
         ],
         BillingMode: 'PAY_PER_REQUEST',
     },
+
+    // 18. UserSnapshots Table (для StateService)
+    {
+        TableName: 'user_snapshots',
+        KeySchema: [
+            { AttributeName: 'user_id', KeyType: 'HASH' },
+            { AttributeName: 'timestamp', KeyType: 'RANGE' },
+        ],
+        AttributeDefinitions: [
+            { AttributeName: 'user_id', AttributeType: 'S' },
+            { AttributeName: 'timestamp', AttributeType: 'N' },
+            { AttributeName: 'machine_type', AttributeType: 'S' },
+        ],
+        GlobalSecondaryIndexes: [
+            {
+                IndexName: 'MachineTypeIndex',
+                KeySchema: [
+                    { AttributeName: 'machine_type', KeyType: 'HASH' },
+                    { AttributeName: 'timestamp', KeyType: 'RANGE' },
+                ],
+                Projection: { ProjectionType: 'ALL' },
+            },
+        ],
+        BillingMode: 'PAY_PER_REQUEST',
+    },
 ];
 
 export async function initAllTables() {

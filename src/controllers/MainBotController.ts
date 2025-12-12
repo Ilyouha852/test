@@ -95,19 +95,19 @@ class MainBotController {
             console.log(`📤 Sending event to machine:`, event);
             actor.send(event);
 
-            // Шаг 3: Получить текущее состояние
-            const currentState = actor.getSnapshot();
-            const stateValue =
-                typeof currentState.value === 'string'
-                    ? currentState.value
-                    : JSON.stringify(currentState.value);
+            // // Шаг 3: Получить текущее состояние
+            // const currentState = actor.getSnapshot();
+            // const stateValue =
+            //     typeof currentState.value === 'string'
+            //         ? currentState.value
+            //         : JSON.stringify(currentState.value);
 
-            console.log(`📍 Current state after event: ${stateValue}`);
+            // console.log(`📍 Current state after event: ${stateValue}`);
 
-            // Шаг 4: Сохранить обновленный снимок в БД
-            await stateService.saveUserSnapshot(userId, actor, 'appealRoot');
+            // // Шаг 4: Сохранить обновленный снимок в БД
+            // await stateService.saveUserSnapshot(userId, actor, 'appealRoot');
 
-            console.log(`✅ Message processed successfully for user ${userId}\\n`);
+            // console.log(`✅ Message processed successfully for user ${userId}\\n`);
         } catch (error) {
             console.error(
                 `❌ Error processing message for user ${userId}:`,
