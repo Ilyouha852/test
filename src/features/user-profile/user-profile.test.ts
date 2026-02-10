@@ -10,7 +10,6 @@ import {
 import { createPopulatedUserProfile } from './user-profile-factories.js';
 import {
     deleteUserProfileFromDatabaseById,
-    retrieveUserProfileFromDatabaseByEmail,
     saveUserProfileToDatabase,
     type UserProfile,
 } from './user-profile-model.js';
@@ -46,7 +45,7 @@ async function setup(numberOfProfiles = 1) {
     return {
         app,
         token,
-        profiles: profiles.sort(
+        profiles: profiles.toSorted(
             (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
         ),
     };

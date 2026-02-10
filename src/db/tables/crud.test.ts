@@ -1,9 +1,8 @@
 import 'dotenv/config';
 
 import { createId } from '@paralleldrive/cuid2';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { TABLE_NAMES } from '../types.js';
 import { createAppeal, deleteAppeal, getAppealById } from './appeal.js';
 import {
     createAppealImage,

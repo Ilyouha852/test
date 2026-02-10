@@ -1,4 +1,3 @@
-import eslint from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
@@ -7,14 +6,15 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import vitest from '@vitest/eslint-plugin';
 
 export default defineConfig([
-    eslint.configs.recommended,
     ...tseslint.configs.recommended,
     eslintPluginUnicorn.configs['recommended'],
+    vitest.configs.recommended,
     {
-        files: ['**/*.{js,ts}'],
-        ignores: ['**/*.js', 'dist/**/*', 'node_modules/**/*'],
+        files: ['src/**/*.{js,ts}'],
+        ignores: ['dist/**/*', 'node_modules/**/*', '*.cjs'],
         plugins: {
             'simple-import-sort': simpleImportSort,
+            vitest,
         },
         rules: {
             'simple-import-sort/imports': 'error',
@@ -24,11 +24,12 @@ export default defineConfig([
             'unicorn/no-array-reduce': 'off',
             'unicorn/prevent-abbreviations': 'off',
             'unicorn/filename-case': ['warn'],
+            '@typescript-eslint/no-explicit-any': 'warn',
+            'unicorn/prefer-top-level-await': 'warn',
+            '@typescript-eslint/no-unused-vars': 'warn',
+            'vitest/no-conditional-expect': 'warn',
+            'vitest/expect-expect': 'warn',
         },
-    },
-    {
-        files: ['src/**/*.test.{js,ts}'],
-        ...vitest.configs.recommended,
     },
     eslintPluginPrettierRecommended,
 ]);

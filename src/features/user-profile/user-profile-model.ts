@@ -64,7 +64,7 @@ export async function retrieveManyUserProfilesFromDatabase({
 }): Promise<UserProfile[]> {
     const skip = (page - 1) * pageSize;
     return mockUserProfiles
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        .toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
         .slice(skip, skip + pageSize);
 }
 

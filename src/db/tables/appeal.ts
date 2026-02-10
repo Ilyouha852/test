@@ -8,7 +8,6 @@ import {
     TABLE_NAMES,
 } from '../types.js';
 import {
-    deleteItem,
     getItem,
     putItem,
     queryByGSI,

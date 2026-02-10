@@ -37,17 +37,9 @@
     "skipLibCheck": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*.ts",
+    "src/*"
   ],
   "exclude": [
-    "node_modules",
-    "dist",
-    "scripts/**/*",
-    "docker-compose.yml",
-    "package.json",
-    "package-lock.json",
-    "tsconfig.json",
-    "*.js",
-    "*.cjs"
   ]
 }
