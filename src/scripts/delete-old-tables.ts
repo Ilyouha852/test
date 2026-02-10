@@ -23,7 +23,10 @@ async function deleteOldTables() {
             if (error.name === 'ResourceNotFoundException') {
                 console.log(`ℹ️  Table does not exist: ${tableName}`);
             } else {
-                console.error(`❌ Error deleting table ${tableName}:`, error.message);
+                console.error(
+                    `❌ Error deleting table ${tableName}:`,
+                    error.message,
+                );
             }
         }
     }
@@ -33,7 +36,7 @@ async function deleteOldTables() {
 
 deleteOldTables()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
         console.error('Fatal error:', error);
         process.exit(1);
     });

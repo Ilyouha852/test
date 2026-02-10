@@ -27,7 +27,7 @@ async function testFullWebhookCycle() {
     console.log(`✅ WebServer started on port ${port}`);
 
     // Wait a moment for server to be ready
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     // Step 3: Send first message (new user)
     console.log('\n--- Step 3: Send первое сообщение (новый пользователь) ---');
@@ -46,7 +46,7 @@ async function testFullWebhookCycle() {
     console.log(`Response 1:`, result1);
 
     // Wait for processing
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Step 4: Send OPEN_LIST command
     console.log('\n--- Step 4: Send OPEN_LIST command ---');
@@ -63,7 +63,7 @@ async function testFullWebhookCycle() {
     const result2 = await response2.json();
     console.log(`Response 2:`, result2);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Step 5: Send CREATE command
     console.log('\n--- Step 5: Send OPEN_CREATE command ---');
@@ -80,7 +80,7 @@ async function testFullWebhookCycle() {
     const result3 = await response3.json();
     console.log(`Response 3:`, result3);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Step 6: Send BACK command
     console.log('\n--- Step 6: Send BACK command ---');
@@ -97,7 +97,9 @@ async function testFullWebhookCycle() {
     const result4 = await response4.json();
     console.log(`Response 4:`, result4);
 
-    console.log('\n🎉 Test completed! Check console output above for state transitions.');
+    console.log(
+        '\n🎉 Test completed! Check console output above for state transitions.',
+    );
     console.log(
         '\nExpected flow: welcome -> listAppeals -> createAppeal -> welcome',
     );

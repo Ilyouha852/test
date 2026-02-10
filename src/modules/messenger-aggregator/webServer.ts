@@ -20,7 +20,7 @@ export class WebServer {
         this.baseUrl = baseUrl || ''; // Сохраняем переданный URL
         this.app = express();
         this.server = http.createServer(this.app);
-        this.messageReceivedPromise = new Promise((resolve) => {
+        this.messageReceivedPromise = new Promise(resolve => {
             this.resolveMessageReceived = resolve;
         });
         this.setupMiddlewares();

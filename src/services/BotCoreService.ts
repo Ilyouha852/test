@@ -15,7 +15,9 @@ class BotCoreService {
      * Обработка унифицированного сообщения из любого источника
      */
     async processMessage(message: UnifiedMessage) {
-        console.log(`🧠 BotCore обрабатывает сообщение от ${message.source}: ${message.id}`);
+        console.log(
+            `🧠 BotCore обрабатывает сообщение от ${message.source}: ${message.id}`,
+        );
 
         // 1. Обработка вложений (Сохранение в MinIO)
         if (message.attachments && message.attachments.length > 0) {
@@ -23,11 +25,17 @@ class BotCoreService {
                 if (attachment.buffer) {
                     try {
                         const fileName = `${message.id}_${Date.now()}.${attachment.type === 'image' ? 'jpg' : 'bin'}`;
-                        const tempKey = await uploadTempFile(attachment.buffer, fileName);
+                        const tempKey = await uploadTempFile(
+                            attachment.buffer,
+                            fileName,
+                        );
                         console.log(`📁 Файл загружен в MinIO: ${tempKey}`);
                         attachment.fileId = tempKey;
                     } catch (error) {
-                        console.error('❌ Не удалось загрузить вложение:', error);
+                        console.error(
+                            '❌ Не удалось загрузить вложение:',
+                            error,
+                        );
                     }
                 }
             }
@@ -50,19 +58,24 @@ class BotCoreService {
     private extractAppealId(text: string): string | null {
         if (!text) return null;
         const match = text.match(/Appeal #([a-zA-Z0-9-]+)/);
-        return match ? (match[1] || null) : null;
+        return match ? match[1] || null : null;
     }
 
     /**
      * Обработка взаимодействия с машиной состояний обращения
      */
-    private async handleAppealInteraction(appealId: string, message: UnifiedMessage) {
+    private async handleAppealInteraction(
+        appealId: string,
+        message: UnifiedMessage,
+    ) {
         const actor = await this.getOrCreateSupportActor(appealId);
         const snapshot = actor.getSnapshot();
 
         // Пример логики: если в состоянии Solving, пересылаем ответ
         if (snapshot.value === 'Solving') {
-            console.log(`🤖 Взаимодействие с обращением ${appealId} в состоянии ${snapshot.value}`);
+            console.log(
+                `🤖 Взаимодействие с обращением ${appealId} в состоянии ${snapshot.value}`,
+            );
 
             // Если это команда
             if (message.content.toLowerCase() === '/cancel') {
@@ -82,23 +95,23 @@ class BotCoreService {
         if (!userState || !userState.actor) {
             console.log(`✨ Создание нового актора для обращения ${appealId}`);
             const actor = createActor(supportAppealMachine, {
-                input: { appealId }
+                input: { appealId },
             });
             actor.start();
 
             userState = {
                 actor,
                 context: actor.getSnapshot().context,
-                history: []
+                history: [],
             };
             stateService.setUserState(appealId, userState);
 
-            actor.subscribe((snapshot) => {
+            actor.subscribe(snapshot => {
                 const currentState = stateService.getUserState(appealId);
                 if (currentState) {
                     currentState.history.push({
                         state: snapshot.value as string,
-                        timestamp: new Date().toISOString()
+                        timestamp: new Date().toISOString(),
                     });
                     currentState.context = snapshot.context;
                     stateService.setUserState(appealId, currentState);
@@ -114,7 +127,9 @@ class BotCoreService {
     async sendToUser(userId: string, source: string, content: string) {
         const connector = messengerAggregator.getConnector(source);
         if (!connector) {
-            console.error(`❌ Невозможно отправить сообщение: Коннектор ${source} не найден`);
+            console.error(
+                `❌ Невозможно отправить сообщение: Коннектор ${source} не найден`,
+            );
             return;
         }
         await connector.sendMessage(userId, content);
@@ -123,7 +138,11 @@ class BotCoreService {
     /**
      * Создание нового обращения (Полный цикл)
      */
-    async createNewAppeal(userId: string, description: string, tempFileKeys: string[] = []): Promise<string> {
+    async createNewAppeal(
+        userId: string,
+        description: string,
+        tempFileKeys: string[] = [],
+    ): Promise<string> {
         // 1. Генерируем ID заранее
         const { createId } = await import('@paralleldrive/cuid2');
         const appealId = createId();
@@ -136,7 +155,10 @@ class BotCoreService {
                 finalAttachments.push(newKey);
                 console.log(`📦 Файл перемещен: ${tempKey} -> ${newKey}`);
             } catch (error) {
-                console.error(`❌ Ошибка при перемещении файла ${tempKey}:`, error);
+                console.error(
+                    `❌ Ошибка при перемещении файла ${tempKey}:`,
+                    error,
+                );
             }
         }
 
@@ -146,7 +168,7 @@ class BotCoreService {
             appealId,
             userId,
             description,
-            attachments: finalAttachments
+            attachments: finalAttachments,
         });
 
         console.log(`✅ Обращение ${appealId} полностью создано.`);

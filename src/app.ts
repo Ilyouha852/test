@@ -7,19 +7,18 @@ import { apiV1Router } from './routes.js';
 import { initDynamoDB } from './utils/initDynamoDB.js';
 
 export function buildApp(): Express {
-  const app = express();
+    const app = express();
 
-  app.use(morgan('dev'));
-  app.use(express.json());
-  app.use(cookieParser());
+    app.use(morgan('dev'));
+    app.use(express.json());
+    app.use(cookieParser());
 
+    // Инициализируем DynamoDB при запуске приложения
+    initDynamoDB().catch(console.error);
 
-  // Инициализируем DynamoDB при запуске приложения
-  initDynamoDB().catch(console.error);
-
-  // Простой гарантированный корневой route
-  app.get('/', (req, res) => {
-    res.send(`
+    // Простой гарантированный корневой route
+    app.get('/', (req, res) => {
+        res.send(`
       <!DOCTYPE html>
       <html>
         <head>
@@ -42,14 +41,14 @@ export function buildApp(): Express {
         </body>
       </html>
     `);
-  });
+    });
 
-  app.use('/api/v1', apiV1Router);
+    app.use('/api/v1', apiV1Router);
 
-  // Fallback route для 404
-  app.use('*', (req, res) => {
-    res.status(404).json({ error: 'Маршрут не найден' });
-  });
+    // Fallback route для 404
+    app.use('*', (req, res) => {
+        res.status(404).json({ error: 'Маршрут не найден' });
+    });
 
-  return app;
+    return app;
 }

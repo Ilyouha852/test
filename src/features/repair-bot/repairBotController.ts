@@ -4,106 +4,106 @@ import { repairBotMachine } from '../../machines/repairBotMachine.js';
 import stateService from '../../services/stateService.js';
 
 interface SessionResult {
-  userId: string;
-  currentState: string;
-  message: string;
+    userId: string;
+    currentState: string;
+    message: string;
 }
 
 interface StateResult extends SessionResult {
-  history: Array<{ state: string; timestamp: string }>;
-  context: any;
-  message: string; // Добавляем это
+    history: Array<{ state: string; timestamp: string }>;
+    context: any;
+    message: string; // Добавляем это
 }
 
 class RepairBotController {
-  async startSession(userId: string): Promise<SessionResult> {
-    const actor = createActor(repairBotMachine);
-    actor.start();
+    async startSession(userId: string): Promise<SessionResult> {
+        const actor = createActor(repairBotMachine);
+        actor.start();
 
-    const state = {
-      actor,
-      context: {},
-      history: [],
-    };
+        const state = {
+            actor,
+            context: {},
+            history: [],
+        };
 
-    stateService.setUserState(userId, state);
+        stateService.setUserState(userId, state);
 
-    actor.subscribe(snapshot => {
-      const userState = stateService.getUserState(userId);
-      if (userState) {
-        userState.history.push({
-          state: snapshot.value as string,
-          timestamp: new Date().toISOString(),
+        actor.subscribe(snapshot => {
+            const userState = stateService.getUserState(userId);
+            if (userState) {
+                userState.history.push({
+                    state: snapshot.value as string,
+                    timestamp: new Date().toISOString(),
+                });
+                stateService.setUserState(userId, userState);
+            }
         });
-        stateService.setUserState(userId, userState);
-      }
-    });
 
-    actor.send({ type: 'START' });
+        actor.send({ type: 'START' });
 
-    const currentSnapshot = actor.getSnapshot();
+        const currentSnapshot = actor.getSnapshot();
 
-    return {
-      userId,
-      currentState: currentSnapshot.value as string,
-      message: 'Сессия начата!',
-    };
-  }
-
-  async sendEvent(
-    userId: string,
-    event: { type: string; problem?: string; details?: string },
-  ): Promise<SessionResult> {
-    const userState = stateService.getUserState(userId);
-
-    if (!userState || !userState.actor) {
-      throw new Error('Сессия не найдена. Начните новую сессию.');
+        return {
+            userId,
+            currentState: currentSnapshot.value as string,
+            message: 'Сессия начата!',
+        };
     }
 
-    userState.actor.send(event);
+    async sendEvent(
+        userId: string,
+        event: { type: string; problem?: string; details?: string },
+    ): Promise<SessionResult> {
+        const userState = stateService.getUserState(userId);
 
-    const currentSnapshot = userState.actor.getSnapshot();
+        if (!userState || !userState.actor) {
+            throw new Error('Сессия не найдена. Начните новую сессию.');
+        }
 
-    return {
-      userId,
-      currentState: currentSnapshot.value as string,
-      message: `Событие ${event.type} обработано`,
-    };
-  }
+        userState.actor.send(event);
 
-  async getState(userId: string): Promise<StateResult> {
-    const userState = stateService.getUserState(userId);
+        const currentSnapshot = userState.actor.getSnapshot();
 
-    if (!userState || !userState.actor) {
-      throw new Error('Сессия не найдена');
+        return {
+            userId,
+            currentState: currentSnapshot.value as string,
+            message: `Событие ${event.type} обработано`,
+        };
     }
 
-    const snapshot = userState.actor.getSnapshot();
+    async getState(userId: string): Promise<StateResult> {
+        const userState = stateService.getUserState(userId);
 
-    return {
-      userId,
-      currentState: snapshot.value as string,
-      history: userState.history,
-      context: snapshot.context,
-      message: 'Хранилище успешно получено',
-    };
-  }
+        if (!userState || !userState.actor) {
+            throw new Error('Сессия не найдена');
+        }
 
-  async endSession(userId: string): Promise<SessionResult> {
-    const userState = stateService.getUserState(userId);
+        const snapshot = userState.actor.getSnapshot();
 
-    if (userState && userState.actor) {
-      userState.actor.stop();
+        return {
+            userId,
+            currentState: snapshot.value as string,
+            history: userState.history,
+            context: snapshot.context,
+            message: 'Хранилище успешно получено',
+        };
     }
 
-    stateService.deleteUserState(userId);
+    async endSession(userId: string): Promise<SessionResult> {
+        const userState = stateService.getUserState(userId);
 
-    return {
-      userId,
-      currentState: 'ended',
-      message: 'Сессия завершена',
-    };
-  }
+        if (userState && userState.actor) {
+            userState.actor.stop();
+        }
+
+        stateService.deleteUserState(userId);
+
+        return {
+            userId,
+            currentState: 'ended',
+            message: 'Сессия завершена',
+        };
+    }
 }
 
 export default new RepairBotController();

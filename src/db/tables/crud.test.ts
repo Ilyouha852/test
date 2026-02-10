@@ -4,26 +4,74 @@ import { createId } from '@paralleldrive/cuid2';
 import { TABLE_NAMES } from '../types.js';
 
 // Import Reference Operations
-import { createUserRole, getUserRoleByName, deleteUserRole } from './references/user-role.js';
-import { createAppealStatus, getAppealStatusByName, deleteAppealStatus } from './references/appeal-status.js';
-import { createAppealCategory, getAppealCategoryByName, deleteAppealCategory } from './references/appeal-category.js';
-import { createAppealSoftware, getAppealSoftwareByName, deleteAppealSoftware } from './references/appeal-software.js';
-import { createAppealCriticality, getAppealCriticalityByName, deleteAppealCriticality } from './references/appeal-criticality.js';
-import { createAppealSubdivision, getAppealSubdivisionByName, deleteAppealSubdivision } from './references/appeal-subdivision.js';
-import { createUserRelationToAppeal, getUserRelationByName, deleteUserRelation } from './references/user-relation.js';
-import { createMessenger, getMessengerByName, deleteMessenger } from './references/messenger.js';
-import { createChatType, getChatTypeByName, deleteChatType } from './references/chat-type.js';
+import {
+    createUserRole,
+    getUserRoleByName,
+    deleteUserRole,
+} from './references/user-role.js';
+import {
+    createAppealStatus,
+    getAppealStatusByName,
+    deleteAppealStatus,
+} from './references/appeal-status.js';
+import {
+    createAppealCategory,
+    getAppealCategoryByName,
+    deleteAppealCategory,
+} from './references/appeal-category.js';
+import {
+    createAppealSoftware,
+    getAppealSoftwareByName,
+    deleteAppealSoftware,
+} from './references/appeal-software.js';
+import {
+    createAppealCriticality,
+    getAppealCriticalityByName,
+    deleteAppealCriticality,
+} from './references/appeal-criticality.js';
+import {
+    createAppealSubdivision,
+    getAppealSubdivisionByName,
+    deleteAppealSubdivision,
+} from './references/appeal-subdivision.js';
+import {
+    createUserRelationToAppeal,
+    getUserRelationByName,
+    deleteUserRelation,
+} from './references/user-relation.js';
+import {
+    createMessenger,
+    getMessengerByName,
+    deleteMessenger,
+} from './references/messenger.js';
+import {
+    createChatType,
+    getChatTypeByName,
+    deleteChatType,
+} from './references/chat-type.js';
 
 // Import Core Operations
 import { createUser, getUserById, deleteUser } from './user.js';
 import { createAppeal, getAppealById, deleteAppeal } from './appeal.js';
 import { createSolution, getSolutionById, deleteSolution } from './solution.js';
 import { createChat, getChatById, deleteChat } from './chat.js';
-import { createCommunication, getCommunicationById, deleteCommunication } from './communication.js';
-import { createAppealImage, getAppealImageById, deleteAppealImage } from './appeal-image.js';
+import {
+    createCommunication,
+    getCommunicationById,
+    deleteCommunication,
+} from './communication.js';
+import {
+    createAppealImage,
+    getAppealImageById,
+    deleteAppealImage,
+} from './appeal-image.js';
 
 // Import M:M Operations
-import { createAppealUser, getUsersForAppeal, removeUserFromAppeal } from './appeal-user.js';
+import {
+    createAppealUser,
+    getUsersForAppeal,
+    removeUserFromAppeal,
+} from './appeal-user.js';
 
 describe('DynamoDB CRUD Operations', () => {
     // Store IDs for cleanup and linking
@@ -212,7 +260,11 @@ describe('DynamoDB CRUD Operations', () => {
         });
 
         it('should remove User from Appeal', async () => {
-            await removeUserFromAppeal(ids.appealId!, ids.userId!, ids.relationId!);
+            await removeUserFromAppeal(
+                ids.appealId!,
+                ids.userId!,
+                ids.relationId!,
+            );
             const users = await getUsersForAppeal(ids.appealId!);
             expect(users).toHaveLength(0);
         });
@@ -221,7 +273,8 @@ describe('DynamoDB CRUD Operations', () => {
     describe('4. Cleanup', () => {
         it('should delete all created entities', async () => {
             // Delete in reverse order of dependencies
-            if (ids.imageId && ids.appealId) await deleteAppealImage(ids.appealId, ids.imageSk!);
+            if (ids.imageId && ids.appealId)
+                await deleteAppealImage(ids.appealId, ids.imageSk!);
             if (ids.commId) await deleteCommunication(ids.commId);
             if (ids.chatId) await deleteChat(ids.chatId);
             if (ids.appealId) await deleteAppeal(ids.appealId);
@@ -232,8 +285,10 @@ describe('DynamoDB CRUD Operations', () => {
             if (ids.chatTypeId) await deleteChatType(ids.chatTypeId);
             if (ids.messengerId) await deleteMessenger(ids.messengerId);
             if (ids.relationId) await deleteUserRelation(ids.relationId);
-            if (ids.subdivisionId) await deleteAppealSubdivision(ids.subdivisionId);
-            if (ids.criticalityId) await deleteAppealCriticality(ids.criticalityId);
+            if (ids.subdivisionId)
+                await deleteAppealSubdivision(ids.subdivisionId);
+            if (ids.criticalityId)
+                await deleteAppealCriticality(ids.criticalityId);
             if (ids.softwareId) await deleteAppealSoftware(ids.softwareId);
             if (ids.categoryId) await deleteAppealCategory(ids.categoryId);
             if (ids.statusId) await deleteAppealStatus(ids.statusId);

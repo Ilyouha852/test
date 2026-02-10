@@ -8,7 +8,7 @@ import stateService from '../services/stateService.js';
 
 /**
  * MainBotController - Обрабатывает полный цикл обработки вебхуков
- * 
+ *
  * Рабочий процесс:
  * 1. Получить вебхук от WebServer
  * 2. Разобрать вебхук через MessengerAggregator -> UnifiedMessage
@@ -100,7 +100,7 @@ class MainBotController {
             const initialState = actor.getSnapshot();
             const initialValue = JSON.stringify(initialState.value);
 
-            await new Promise<void>((resolve) => {
+            await new Promise<void>(resolve => {
                 let resolved = false;
 
                 const subscription = actor.subscribe((snapshot: any) => {
@@ -135,7 +135,9 @@ class MainBotController {
             // Шаг 5: Сохранить обновленный снимок в БД
             await stateService.saveUserSnapshot(userId, actor, 'appealRoot');
 
-            console.log(`✅ Message processed successfully for user ${userId}\\n`);
+            console.log(
+                `✅ Message processed successfully for user ${userId}\\n`,
+            );
         } catch (error) {
             console.error(
                 `❌ Error processing message for user ${userId}:`,
@@ -177,27 +179,27 @@ class MainBotController {
 
         // Сопоставить общие текстовые команды с событиями
         const eventMap: Record<string, any> = {
-            'ПРИВЕТ': { type: 'START' },
-            'START': { type: 'START' },
-            'СПИСОК': { type: 'OPEN_LIST' },
-            'OPEN_LIST': { type: 'OPEN_LIST' },
-            'СОЗДАТЬ': { type: 'OPEN_CREATE' },
-            'OPEN_CREATE': { type: 'OPEN_CREATE' },
-            'CREATE': { type: 'OPEN_CREATE' },
-            'НАЗАД': { type: 'BACK' },
-            'BACK': { type: 'BACK' },
-            'ПОМОЩЬ': { type: 'HELP' },
-            'HELP': { type: 'HELP' },
-            'ADD_DESCRIPTION': { type: 'ADD_DESCRIPTION' },
-            'SELECT_CATEGORY': { type: 'SELECT_CATEGORY' },
-            'CHOOSE_SOFTWARE': { type: 'CHOOSE_SOFTWARE' },
-            'SET_CRITICALITY': { type: 'SET_CRITICALITY' },
-            'ATTACH_FILE': { type: 'ATTACH_FILE' },
-            'STOP_ATTACHING': { type: 'STOP_ATTACHING' },
-            'CONFIRM_CREATION': { type: 'CONFIRM_CREATION' },
-            'CANCEL_CREATION': { type: 'CANCEL_CREATION' },
-            'CONFIRM_FIXATION': { type: 'CONFIRM_FIXATION' },
-            'CANCEL_FIXATION': { type: 'CANCEL_FIXATION' }
+            ПРИВЕТ: { type: 'START' },
+            START: { type: 'START' },
+            СПИСОК: { type: 'OPEN_LIST' },
+            OPEN_LIST: { type: 'OPEN_LIST' },
+            СОЗДАТЬ: { type: 'OPEN_CREATE' },
+            OPEN_CREATE: { type: 'OPEN_CREATE' },
+            CREATE: { type: 'OPEN_CREATE' },
+            НАЗАД: { type: 'BACK' },
+            BACK: { type: 'BACK' },
+            ПОМОЩЬ: { type: 'HELP' },
+            HELP: { type: 'HELP' },
+            ADD_DESCRIPTION: { type: 'ADD_DESCRIPTION' },
+            SELECT_CATEGORY: { type: 'SELECT_CATEGORY' },
+            CHOOSE_SOFTWARE: { type: 'CHOOSE_SOFTWARE' },
+            SET_CRITICALITY: { type: 'SET_CRITICALITY' },
+            ATTACH_FILE: { type: 'ATTACH_FILE' },
+            STOP_ATTACHING: { type: 'STOP_ATTACHING' },
+            CONFIRM_CREATION: { type: 'CONFIRM_CREATION' },
+            CANCEL_CREATION: { type: 'CANCEL_CREATION' },
+            CONFIRM_FIXATION: { type: 'CONFIRM_FIXATION' },
+            CANCEL_FIXATION: { type: 'CANCEL_FIXATION' },
         };
 
         // Проверить, является ли это прямой командой

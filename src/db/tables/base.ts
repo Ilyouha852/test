@@ -27,7 +27,10 @@ export async function getItem<T extends Record<string, any>>(
 }
 
 // Generic Put Item
-export async function putItem<T extends Record<string, any>>(tableName: string, item: T): Promise<T> {
+export async function putItem<T extends Record<string, any>>(
+    tableName: string,
+    item: T,
+): Promise<T> {
     await docClient.send(
         new PutCommand({
             TableName: tableName,

@@ -27,7 +27,10 @@ export async function createUserRelationToAppeal(
 export async function getUserRelationById(
     relationId: string,
 ): Promise<UserRelationToAppeal | null> {
-    return getItem<UserRelationToAppeal>(TABLE_NAMES.USER_RELATIONS, relationId);
+    return getItem<UserRelationToAppeal>(
+        TABLE_NAMES.USER_RELATIONS,
+        relationId,
+    );
 }
 
 export async function getUserRelationByName(

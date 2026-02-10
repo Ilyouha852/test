@@ -7,12 +7,7 @@ import {
     type Solution,
     type SolutionCreateInput,
 } from '../types.js';
-import {
-    deleteItem,
-    getItem,
-    putItem,
-    updateItem,
-} from './base.js';
+import { deleteItem, getItem, putItem, updateItem } from './base.js';
 
 export async function createSolution(
     input: SolutionCreateInput,

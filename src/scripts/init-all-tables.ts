@@ -154,7 +154,7 @@ const tableDefinitions = [
         TABLE_NAMES.APPEAL_STATUSES,
         TABLE_NAMES.APPEAL_CRITICALITY,
         TABLE_NAMES.USER_RELATIONS,
-    ].map((tableName) => ({
+    ].map(tableName => ({
         TableName: tableName,
         KeySchema: [
             { AttributeName: 'id', KeyType: 'HASH' },
@@ -330,9 +330,7 @@ const tableDefinitions = [
         GlobalSecondaryIndexes: [
             {
                 IndexName: 'UserIdIndex',
-                KeySchema: [
-                    { AttributeName: 'userId', KeyType: 'HASH' },
-                ],
+                KeySchema: [{ AttributeName: 'userId', KeyType: 'HASH' }],
                 Projection: { ProjectionType: 'ALL' },
             },
             {
@@ -377,7 +375,10 @@ export async function initAllTables() {
     console.log('🔧 Initializing all DynamoDB tables...');
     console.log('  Endpoint:', process.env.DYNAMODB_ENDPOINT);
     console.log('  Region:', process.env.DYNAMODB_REGION);
-    console.log('  AccessKey:', process.env.AWS_ACCESS_KEY_ID ? '***' : 'undefined');
+    console.log(
+        '  AccessKey:',
+        process.env.AWS_ACCESS_KEY_ID ? '***' : 'undefined',
+    );
 
     const results = {
         created: [] as string[],
@@ -427,7 +428,7 @@ export async function initAllTables() {
 // Run unconditionally
 initAllTables()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
         console.error('Fatal error:', error);
         process.exit(1);
     });
