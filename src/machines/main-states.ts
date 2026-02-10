@@ -1,14 +1,14 @@
 import { assign, createMachine, forwardTo } from 'xstate';
 
-import { appealCreateMachine } from './masterCreateAppeal.js';
-import { appealJoinMachine } from './masterJoinAppeal.js';
+import { appealCreateMachine } from './master-create-appeal.js';
+import { appealJoinMachine } from './master-join-appeal.js';
 
 /**
  * Контекст корневой машины
  */
 export interface AppealRootContext {
-    userId: string | null;
-    appealId?: string | null;
+    userId: string | undefined;
+    appealId?: string | undefined;
 }
 
 /**
@@ -51,8 +51,8 @@ export const appealRootMachine = createMachine(
         },
 
         context: ({ input }) => ({
-            userId: input?.userId || null,
-            appealId: null,
+            userId: input?.userId || undefined,
+            appealId: undefined,
         }),
 
         states: {
@@ -76,7 +76,7 @@ export const appealRootMachine = createMachine(
                             appealId: ({ event }) =>
                                 event.type === 'SELECT_APPEAL'
                                     ? event.appealId
-                                    : null,
+                                    : undefined,
                         }),
                     },
                     OPEN_CREATE: { target: 'createAppeal' },
@@ -202,9 +202,9 @@ export const appealRootMachine = createMachine(
                 // Try to fetch the list of appeals from the service and print it.
                 // We intentionally don't await here so this action stays synchronous for XState entry,
                 // but we log the result when it arrives.
-                import('../services/appealService.js')
+                import('../services/appeal-service.js')
                     .then(({ listRequestsForUser }) => {
-                        return listRequestsForUser(context.userId ?? null);
+                        return listRequestsForUser(context.userId ?? undefined);
                     })
                     .then(text => {
                         console.log('📋 Список обращений:');

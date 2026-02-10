@@ -33,7 +33,9 @@ export async function createUserState(
 }
 
 // Get User State by UserId
-export async function getUserState(userId: string): Promise<UserState | null> {
+export async function getUserState(
+    userId: string,
+): Promise<UserState | undefined> {
     const id = createEntityId('USER_STATE', userId);
     return getItem<UserState>(TABLE_NAMES.USER_STATES, id);
 }

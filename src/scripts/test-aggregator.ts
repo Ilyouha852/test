@@ -1,9 +1,9 @@
 import 'dotenv/config';
 
-import { MockConnector } from '../modules/messenger-aggregator/connectors/MockConnector.js';
-import { messengerAggregator } from '../modules/messenger-aggregator/MessengerAggregator.js';
-import { botCoreService } from '../services/BotCoreService.js';
-import { WebServer } from '../modules/messenger-aggregator/webServer.js';
+import { MockConnector } from '../modules/messenger-aggregator/connectors/mock-connector.js';
+import { messengerAggregator } from '../modules/messenger-aggregator/messenger-aggregator.js';
+import { WebServer } from '../modules/messenger-aggregator/web-server.js';
+import { botCoreService } from '../services/bot-core-service.js';
 
 async function runTest() {
     console.log('🧪 Запуск теста Агрегатора...');

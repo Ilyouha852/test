@@ -1,77 +1,76 @@
 import 'dotenv/config';
-import { describe, it, expect, beforeAll } from 'vitest';
+
 import { createId } from '@paralleldrive/cuid2';
+import { beforeAll, describe, expect, it } from 'vitest';
+
 import { TABLE_NAMES } from '../types.js';
-
-// Import Reference Operations
-import {
-    createUserRole,
-    getUserRoleByName,
-    deleteUserRole,
-} from './references/user-role.js';
-import {
-    createAppealStatus,
-    getAppealStatusByName,
-    deleteAppealStatus,
-} from './references/appeal-status.js';
-import {
-    createAppealCategory,
-    getAppealCategoryByName,
-    deleteAppealCategory,
-} from './references/appeal-category.js';
-import {
-    createAppealSoftware,
-    getAppealSoftwareByName,
-    deleteAppealSoftware,
-} from './references/appeal-software.js';
-import {
-    createAppealCriticality,
-    getAppealCriticalityByName,
-    deleteAppealCriticality,
-} from './references/appeal-criticality.js';
-import {
-    createAppealSubdivision,
-    getAppealSubdivisionByName,
-    deleteAppealSubdivision,
-} from './references/appeal-subdivision.js';
-import {
-    createUserRelationToAppeal,
-    getUserRelationByName,
-    deleteUserRelation,
-} from './references/user-relation.js';
-import {
-    createMessenger,
-    getMessengerByName,
-    deleteMessenger,
-} from './references/messenger.js';
-import {
-    createChatType,
-    getChatTypeByName,
-    deleteChatType,
-} from './references/chat-type.js';
-
-// Import Core Operations
-import { createUser, getUserById, deleteUser } from './user.js';
-import { createAppeal, getAppealById, deleteAppeal } from './appeal.js';
-import { createSolution, getSolutionById, deleteSolution } from './solution.js';
-import { createChat, getChatById, deleteChat } from './chat.js';
-import {
-    createCommunication,
-    getCommunicationById,
-    deleteCommunication,
-} from './communication.js';
+import { createAppeal, deleteAppeal, getAppealById } from './appeal.js';
 import {
     createAppealImage,
-    getAppealImageById,
     deleteAppealImage,
+    getAppealImageById,
 } from './appeal-image.js';
-
 // Import M:M Operations
 import {
     createAppealUser,
     getUsersForAppeal,
     removeUserFromAppeal,
 } from './appeal-user.js';
+import { createChat, deleteChat, getChatById } from './chat.js';
+import {
+    createCommunication,
+    deleteCommunication,
+    getCommunicationById,
+} from './communication.js';
+import {
+    createAppealCategory,
+    deleteAppealCategory,
+    getAppealCategoryByName,
+} from './references/appeal-category.js';
+import {
+    createAppealCriticality,
+    deleteAppealCriticality,
+    getAppealCriticalityByName,
+} from './references/appeal-criticality.js';
+import {
+    createAppealSoftware,
+    deleteAppealSoftware,
+    getAppealSoftwareByName,
+} from './references/appeal-software.js';
+import {
+    createAppealStatus,
+    deleteAppealStatus,
+    getAppealStatusByName,
+} from './references/appeal-status.js';
+import {
+    createAppealSubdivision,
+    deleteAppealSubdivision,
+    getAppealSubdivisionByName,
+} from './references/appeal-subdivision.js';
+import {
+    createChatType,
+    deleteChatType,
+    getChatTypeByName,
+} from './references/chat-type.js';
+import {
+    createMessenger,
+    deleteMessenger,
+    getMessengerByName,
+} from './references/messenger.js';
+import {
+    createUserRelationToAppeal,
+    deleteUserRelation,
+    getUserRelationByName,
+} from './references/user-relation.js';
+// Import Reference Operations
+import {
+    createUserRole,
+    deleteUserRole,
+    getUserRoleByName,
+} from './references/user-role.js';
+import { createSolution, deleteSolution, getSolutionById } from './solution.js';
+// Import Core Operations
+import { createUser, deleteUser, getUserById } from './user.js';
 
 describe('DynamoDB CRUD Operations', () => {
     // Store IDs for cleanup and linking

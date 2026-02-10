@@ -1,8 +1,9 @@
-import { dynamoDBClient } from '../db/dynamodb.js';
 import {
-    ListTablesCommand,
     DescribeTableCommand,
+    ListTablesCommand,
 } from '@aws-sdk/client-dynamodb';
+
+import { dynamoDBClient } from '../db/dynamodb.js';
 
 async function checkTables() {
     try {
@@ -23,7 +24,7 @@ async function checkTables() {
             const tableInfo = await dynamoDBClient.send(describeCommand);
             console.log(
                 'Структура таблицы:',
-                JSON.stringify(tableInfo.Table, null, 2),
+                JSON.stringify(tableInfo.Table, undefined, 2),
             );
         } else {
             console.log(`\n❌ Таблица "${tableName}" НЕ существует!`);

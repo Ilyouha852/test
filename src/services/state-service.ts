@@ -1,5 +1,5 @@
-import type { ActorRefFrom } from 'xstate';
 import NodeCache from 'node-cache';
+import type { ActorRefFrom } from 'xstate';
 
 import {
     createUserState,
@@ -130,15 +130,15 @@ class StateService {
     /**
      * Загрузить снимок XState из DynamoDB
      * @param userId - ID пользователя
-     * @returns Снимок или null если не найден
+     * @returns Снимок или undefined если не найден
      */
-    async loadUserSnapshot(userId: string): Promise<any | null> {
+    async loadUserSnapshot(userId: string): Promise<any | undefined> {
         try {
             const userState = await getUserStateFromDB(userId);
 
             if (!userState) {
                 console.log(`ℹ️  No snapshot found for user ${userId}`);
-                return null;
+                return undefined;
             }
 
             console.log(
@@ -150,7 +150,7 @@ class StateService {
                 `❌ Failed to load snapshot for user ${userId}:`,
                 error,
             );
-            return null;
+            return undefined;
         }
     }
 
@@ -177,16 +177,19 @@ class StateService {
      * Получить снимок с информацией о типе машины
      * Полезно для определения какую машину восстанавливать
      */
-    async getUserSnapshotWithMeta(userId: string): Promise<{
-        snapshot: any;
-        machineType: string;
-        currentState: string;
-    } | null> {
+    async getUserSnapshotWithMeta(userId: string): Promise<
+        | {
+              snapshot: any;
+              machineType: string;
+              currentState: string;
+          }
+        | undefined
+    > {
         try {
             const userState = await getUserStateFromDB(userId);
 
             if (!userState) {
-                return null;
+                return undefined;
             }
 
             return {
@@ -199,7 +202,7 @@ class StateService {
                 `❌ Failed to get snapshot meta for user ${userId}:`,
                 error,
             );
-            return null;
+            return undefined;
         }
     }
 

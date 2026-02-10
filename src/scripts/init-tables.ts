@@ -1,3 +1,3 @@
-import { initDynamoDB } from '../utils/initDynamoDB.js';
+import { initDynamoDb } from '../utils/init-dynamo-db.js';
 
-initDynamoDB().catch(console.error);
+initDynamoDb().catch(console.error);

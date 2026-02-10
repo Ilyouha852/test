@@ -1,13 +1,13 @@
-import type { Connector } from '../interfaces/Connector.js';
+import type { Connector } from '../interfaces/connector.js';
 import type { UnifiedMessage } from '../types.js';
 
 export class MockConnector implements Connector {
     name = 'mock-connector';
 
-    async parse(payload: any): Promise<UnifiedMessage | null> {
+    async parse(payload: any): Promise<UnifiedMessage | undefined> {
         console.log('MockConnector парсит сообщение', payload);
         if (!payload.text) {
-            return null;
+            return undefined;
         }
 
         return {

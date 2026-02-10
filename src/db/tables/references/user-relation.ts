@@ -3,8 +3,8 @@ import { createId } from '@paralleldrive/cuid2';
 import {
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
     type ReferenceCreateInput,
+    TABLE_NAMES,
     type UserRelationToAppeal,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
@@ -26,7 +26,7 @@ export async function createUserRelationToAppeal(
 
 export async function getUserRelationById(
     relationId: string,
-): Promise<UserRelationToAppeal | null> {
+): Promise<UserRelationToAppeal | undefined> {
     return getItem<UserRelationToAppeal>(
         TABLE_NAMES.USER_RELATIONS,
         relationId,
@@ -35,7 +35,7 @@ export async function getUserRelationById(
 
 export async function getUserRelationByName(
     name: string,
-): Promise<UserRelationToAppeal | null> {
+): Promise<UserRelationToAppeal | undefined> {
     const relations = await queryByGSI<UserRelationToAppeal>(
         TABLE_NAMES.USER_RELATIONS,
         'NameIndex',
@@ -43,7 +43,7 @@ export async function getUserRelationByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return relations[0] || null;
+    return relations[0] || undefined;
 }
 
 export async function deleteUserRelation(relationId: string): Promise<void> {

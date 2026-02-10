@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type Appeal,
+    type AppealCreateInput,
     createEntityId,
     METADATA_SK,
     TABLE_NAMES,
-    type Appeal,
-    type AppealCreateInput,
 } from '../types.js';
 import {
     deleteItem,
@@ -67,7 +67,9 @@ export async function createAppeal(input: AppealCreateInput): Promise<Appeal> {
     return appeal;
 }
 
-export async function getAppealById(appealId: string): Promise<Appeal | null> {
+export async function getAppealById(
+    appealId: string,
+): Promise<Appeal | undefined> {
     return getItem<Appeal>(TABLE_NAMES.APPEALS, appealId);
 }
 

@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type AppealCategory,
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
-    type AppealCategory,
     type ReferenceCreateInput,
+    TABLE_NAMES,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
 
@@ -26,13 +26,13 @@ export async function createAppealCategory(
 
 export async function getAppealCategoryById(
     categoryId: string,
-): Promise<AppealCategory | null> {
+): Promise<AppealCategory | undefined> {
     return getItem<AppealCategory>(TABLE_NAMES.APPEAL_CATEGORIES, categoryId);
 }
 
 export async function getAppealCategoryByName(
     name: string,
-): Promise<AppealCategory | null> {
+): Promise<AppealCategory | undefined> {
     const categories = await queryByGSI<AppealCategory>(
         TABLE_NAMES.APPEAL_CATEGORIES,
         'NameIndex',
@@ -40,7 +40,7 @@ export async function getAppealCategoryByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return categories[0] || null;
+    return categories[0] || undefined;
 }
 
 export async function deleteAppealCategory(categoryId: string): Promise<void> {

@@ -34,7 +34,7 @@
     "dev:full": "npm run storage:start && timeout 5 && npm run dev",
     "db:check-connection": "node scripts/check-dynamo-connection.cjs",
     "system:check": "node scripts/check-system.cjs",
-    "test:dynamodb": "npx ts-node src/test-dynamodb.ts",
+    "test:dynamodb": "npx ts-node src/test-dynamo-db.ts",
     "test-client": "npx ts-node src/test-client.ts"
   },
   "dependencies": {

@@ -1,13 +1,13 @@
 import { DeleteCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { createId } from '@paralleldrive/cuid2';
 
+import { docClient } from '../dynamodb.js';
 import {
-    createEntityId,
-    TABLE_NAMES,
     type AppealUser,
     type AppealUserCreateInput,
+    createEntityId,
+    TABLE_NAMES,
 } from '../types.js';
-import { docClient } from '../dynamodb.js';
 import { putItem, validateFKExists } from './base.js';
 
 export async function createAppealUser(

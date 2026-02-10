@@ -47,12 +47,12 @@ export async function createUser(input: UserCreateInput): Promise<User> {
 }
 
 // Get User by ID
-export async function getUserById(userId: string): Promise<User | null> {
+export async function getUserById(userId: string): Promise<User | undefined> {
     return getItem<User>(TABLE_NAMES.USERS, userId);
 }
 
 // Get User by Email (using GSI)
-export async function getUserByEmail(email: string): Promise<User | null> {
+export async function getUserByEmail(email: string): Promise<User | undefined> {
     const users = await queryByGSI<User>(
         TABLE_NAMES.USERS,
         'EmailIndex',
@@ -60,7 +60,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
         { ':email': email.toLowerCase() },
         { '#email': 'email' },
     );
-    return users[0] || null;
+    return users[0] || undefined;
 }
 
 // Get Users by Role (using GSI)

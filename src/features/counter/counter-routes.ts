@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import counterService from '../../services/counterService.js';
+import counterService from '../../services/counter-service.js';
 import { asyncHandler } from '../../utils/async-handler.js';
 
 const router = Router();

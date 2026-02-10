@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import { asyncHandler } from '../../utils/async-handler.js';
-import repairBotController from './repairBotController.js';
+import repairBotController from './repair-bot-controller.js';
 
 const router = Router();
 

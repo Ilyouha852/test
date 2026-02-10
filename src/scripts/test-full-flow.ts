@@ -3,17 +3,17 @@ import 'dotenv/config';
 import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
 
-import { docClient, TABLE_NAME } from '../config/dynamodb.js';
-import { botCoreService } from '../services/BotCoreService.js';
-import { uploadTempFile } from '../services/s3Service.js';
-import { initDynamoDB } from '../utils/initDynamoDB.js';
+import { docClient, TABLE_NAME } from '../config/dynamo-db.js';
+import { botCoreService } from '../services/bot-core-service.js';
+import { uploadTempFile } from '../services/s3-service.js';
+import { initDynamoDb } from '../utils/init-dynamo-db.js';
 
 async function testFullFlow() {
     console.log('🚀 Запуск теста полного цикла ядра (Full Core Flow)');
 
     // 0. Убедимся что таблица существует
     console.log('\n--- Шаг 0: Инициализация таблицы DynamoDB ---');
-    await initDynamoDB();
+    await initDynamoDb();
 
     // 1. Симуляция загрузки файла (как будто от мессенджера)
     console.log('\n--- Шаг 1: Симуляция загрузки файла (Temp) ---');

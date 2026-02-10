@@ -1,7 +1,7 @@
 import { createActor } from 'xstate';
 
-import { repairBotMachine } from '../../machines/repairBotMachine.js';
-import stateService from '../../services/stateService.js';
+import { repairBotMachine } from '../../machines/repair-bot-machine.js';
+import stateService from '../../services/state-service.js';
 
 interface SessionResult {
     userId: string;

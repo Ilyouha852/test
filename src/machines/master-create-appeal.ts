@@ -1,8 +1,9 @@
-import { assign, createMachine, sendParent, fromPromise } from 'xstate';
-import { createAppeal } from '../services/dynamoService.js';
+import { assign, createMachine, fromPromise, sendParent } from 'xstate';
+
+import { createAppeal } from '../services/dynamo-service.js';
 
 export interface AppealCreateContext {
-    userId: string | null;
+    userId: string | undefined;
     description?: string;
     category?: string;
     software?: string;
@@ -36,7 +37,7 @@ export const appealCreateMachine = createMachine(
         },
 
         context: {
-            userId: null,
+            userId: undefined,
             description: '',
             category: '',
             software: '',

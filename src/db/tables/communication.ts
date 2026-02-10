@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type CommunicationCreateInput,
+    type CommunicationWithUser,
     createEntityId,
     METADATA_SK,
     TABLE_NAMES,
-    type CommunicationCreateInput,
-    type CommunicationWithUser,
 } from '../types.js';
 import {
     deleteItem,
@@ -49,7 +49,7 @@ export async function createCommunication(
 
 export async function getCommunicationById(
     commId: string,
-): Promise<CommunicationWithUser | null> {
+): Promise<CommunicationWithUser | undefined> {
     return getItem<CommunicationWithUser>(TABLE_NAMES.COMMUNICATIONS, commId);
 }
 

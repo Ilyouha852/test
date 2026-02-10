@@ -1,8 +1,8 @@
 import { CreateTableCommand } from '@aws-sdk/client-dynamodb';
 
-import { dynamoDBClient, TABLE_NAME } from '../config/dynamodb.js';
+import { dynamoDBClient, TABLE_NAME } from '../config/dynamo-db.js';
 
-export async function initDynamoDB() {
+export async function initDynamoDb() {
     try {
         console.log('🔧 Initializing DynamoDB table...');
 

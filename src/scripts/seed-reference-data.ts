@@ -1,8 +1,9 @@
 import 'dotenv/config';
+
 import { createId } from '@paralleldrive/cuid2';
 
-import { createEntityId, METADATA_SK, TABLE_NAMES } from '../db/types.js';
 import { putItem } from '../db/tables/base.js';
+import { createEntityId, METADATA_SK, TABLE_NAMES } from '../db/types.js';
 
 // ✅ Данные из официальных словарей терминов проекта
 const referenceData = {

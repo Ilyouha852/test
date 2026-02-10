@@ -4,8 +4,8 @@ import { createMachine } from 'xstate';
  * Контекст мастера присоединения к обращению
  */
 export interface AppealJoinContext {
-    userId: string | null;
-    appealId: string | null;
+    userId: string | undefined;
+    appealId: string | undefined;
 }
 
 /**
@@ -33,8 +33,8 @@ export const appealJoinMachine = createMachine(
         },
 
         context: {
-            userId: null,
-            appealId: null,
+            userId: undefined,
+            appealId: undefined,
         },
 
         states: {

@@ -16,14 +16,14 @@ export async function getItem<T extends Record<string, any>>(
     tableName: string,
     id: string,
     sk: string = METADATA_SK,
-): Promise<T | null> {
+): Promise<T | undefined> {
     const result = await docClient.send(
         new GetCommand({
             TableName: tableName,
             Key: { id, sk },
         }),
     );
-    return (result.Item as T) || null;
+    return (result.Item as T) || undefined;
 }
 
 // Generic Put Item
@@ -51,14 +51,15 @@ export async function updateItem(
         .map((key, index) => `#${key} = :val${index}`)
         .join(', ');
 
-    const expressionAttributeNames = Object.keys(updates).reduce(
-        (acc, key) => ({ ...acc, [`#${key}`]: key }),
-        {},
+    const expressionAttributeNames = Object.fromEntries(
+        Object.keys(updates).map(key => [`#${key}`, key]),
     );
 
-    const expressionAttributeValues = Object.keys(updates).reduce(
-        (acc, key, index) => ({ ...acc, [`:val${index}`]: updates[key] }),
-        {},
+    const expressionAttributeValues = Object.fromEntries(
+        Object.keys(updates).map((key, index) => [
+            `:val${index}`,
+            updates[key],
+        ]),
     );
 
     await docClient.send(
@@ -126,7 +127,7 @@ export async function validateFKExists(
     entityId: string,
 ): Promise<boolean> {
     const item = await getItem(tableName, entityId);
-    return item !== null;
+    return item !== undefined;
 }
 
 // Generate CUID

@@ -1,12 +1,12 @@
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { createId } from '@paralleldrive/cuid2';
 
-import { docClient, TABLE_NAME } from '../config/dynamodb.js';
+import { docClient, TABLE_NAME } from '../config/dynamo-db.js';
 import { TABLE_NAMES } from '../db/types.js';
 
 export interface AppealContext {
     appealId?: string;
-    userId: string | null;
+    userId: string | undefined;
     description?: string;
     category?: string;
     software?: string;
@@ -53,7 +53,7 @@ export async function createAppeal(ctx: AppealContext): Promise<string> {
     };
 
     console.log(`📝 Attempting to save to table: ${TABLE_NAMES.APPEALS}`); // Используйте правильное имя
-    console.log(`📝 Appeal data:`, JSON.stringify(appeal, null, 2));
+    console.log(`📝 Appeal data:`, JSON.stringify(appeal, undefined, 2));
 
     try {
         await docClient.send(

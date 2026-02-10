@@ -1,9 +1,10 @@
-import type { UnifiedMessage } from '../modules/messenger-aggregator/types.js';
-import { messengerAggregator } from '../modules/messenger-aggregator/MessengerAggregator.js';
-import { moveTempToAppeal, uploadTempFile } from './s3Service.js'; // Предполагается, что s3Service экспортирует эти функции
-import stateService from './stateService.js'; // Предполагается, что stateService существует
 import { createActor } from 'xstate';
-import { supportAppealMachine } from '../machines/supportAppealMachine.js';
+
+import { supportAppealMachine } from '../machines/support-appeal-machine.js';
+import { messengerAggregator } from '../modules/messenger-aggregator/messenger-aggregator.js';
+import type { UnifiedMessage } from '../modules/messenger-aggregator/types.js';
+import { moveTempToAppeal, uploadTempFile } from './s3-service.js'; // Предполагается, что s3Service экспортирует эти функции
+import stateService from './state-service.js'; // Предполагается, что stateService существует
 
 class BotCoreService {
     constructor() {
@@ -42,7 +43,7 @@ class BotCoreService {
         }
 
         // 2. Определение ID обращения (Бизнес-логика)
-        let appealId = this.extractAppealId(message.content);
+        const appealId = this.extractAppealId(message.content);
 
         // 3. Взаимодействие с машиной состояний
         if (appealId) {
@@ -55,10 +56,10 @@ class BotCoreService {
     /**
      * Извлечение ID обращения из текста
      */
-    private extractAppealId(text: string): string | null {
-        if (!text) return null;
-        const match = text.match(/Appeal #([a-zA-Z0-9-]+)/);
-        return match ? match[1] || null : null;
+    private extractAppealId(text: string): string | undefined {
+        if (!text) return undefined;
+        const match = text.match(/Appeal #([\dA-Za-z-]+)/);
+        return match ? match[1] || undefined : undefined;
     }
 
     /**
@@ -163,7 +164,7 @@ class BotCoreService {
         }
 
         // 3. Сохраняем обращение в БД
-        const { createAppeal } = await import('./dynamoService.js');
+        const { createAppeal } = await import('./dynamo-service.js');
         await createAppeal({
             appealId,
             userId,

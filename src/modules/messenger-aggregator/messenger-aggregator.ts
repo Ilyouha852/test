@@ -1,4 +1,4 @@
-import type { Connector } from './interfaces/Connector.js';
+import type { Connector } from './interfaces/connector.js';
 import type { UnifiedMessage } from './types.js';
 
 type MessageHandler = (message: UnifiedMessage) => void;
@@ -33,11 +33,11 @@ export class MessengerAggregator {
     async processWebhook(
         source: string,
         payload: any,
-    ): Promise<UnifiedMessage | null> {
+    ): Promise<UnifiedMessage | undefined> {
         const connector = this.connectors.get(source);
         if (!connector) {
             console.error(`❌ Коннектор не найден для источника: ${source}`);
-            return null;
+            return undefined;
         }
 
         try {
@@ -48,7 +48,7 @@ export class MessengerAggregator {
             return message;
         } catch (error) {
             console.error(`❌ Ошибка обработки вебхука для ${source}:`, error);
-            return null;
+            return undefined;
         }
     }
 

@@ -1,6 +1,6 @@
 import { createActor } from 'xstate';
 
-import { supportAppealMachine } from '../machines/supportAppealMachine.js';
+import { supportAppealMachine } from '../machines/support-appeal-machine.js';
 
 async function testMachine() {
     console.log('🚀 Запуск теста машины обращений поддержки');

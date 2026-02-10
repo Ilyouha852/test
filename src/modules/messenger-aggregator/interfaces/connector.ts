@@ -5,9 +5,9 @@ export interface Connector {
 
     /**
      * Парсит "сырую" полезную нагрузку от мессенджера в UnifiedMessage.
-     * Возвращает null, если нагрузка не является валидным сообщением или должна быть проигнорирована.
+     * Возвращает undefined, если нагрузка не является валидным сообщением или должна быть проигнорирована.
      */
-    parse(payload: any): Promise<UnifiedMessage | null>;
+    parse(payload: any): Promise<UnifiedMessage | undefined>;
 
     /**
      * Отправляет сообщение обратно пользователю через этот коннектор.

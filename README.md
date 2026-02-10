@@ -16,23 +16,23 @@
 src/
 ├── config/                 # Конфигурация (DynamoDB, env)
 ├── controllers/            # Контроллеры (обработка HTTP запросов)
-│   └── MainBotController.ts # Основной контроллер для вебхуков Telegram
+│   └── main-bot-controller.ts # Основной контроллер для вебхуков Telegram
 ├── features/               # Модули функциональности (Auth, User Profile, Health Check)
 ├── machines/               # Машины состояний (XState)
-│   ├── supportAppealMachine.ts # Логика обработки обращения в поддержку
-│   └── repairBotMachine.ts     # Логика бота по ремонту
+│   ├── support-appeal-machine.ts # Логика обработки обращения в поддержку
+│   └── repair-bot-machine.ts     # Логика бота по ремонту
 ├── middleware/             # Middleware (Аутентификация, Валидация)
 ├── modules/
 │   └── messenger-aggregator/ # Модуль агрегации мессенджеров
 │       ├── connectors/     # Коннекторы для разных платформ (Mock, Telegram)
 │       ├── interfaces/     # Интерфейсы (Connector)
-│       └── MessengerAggregator.ts # Основной класс агрегатора
+│       └── messenger-aggregator.ts # Основной класс агрегатора
 ├── scripts/                # Скрипты для инициализации и тестов
 ├── services/               # Бизнес-логика
-│   ├── BotCoreService.ts   # Ядро бота (связь агрегатора, машин состояний и БД)
-│   ├── s3Service.ts        # Работа с MinIO (S3)
-│   ├── dynamoService.ts    # Работа с DynamoDB
-│   └── stateService.ts     # In-memory хранилище состояний пользователей
+│   ├── bot-core-service.ts   # Ядро бота (связь агрегатора, машин состояний и БД)
+│   ├── s3-service.ts        # Работа с MinIO (S3)
+│   ├── dynamo-service.ts    # Работа с DynamoDB
+│   └── state-service.ts     # In-memory хранилище состояний пользователей
 ├── utils/                  # Утилиты
 ├── app.ts                  # Настройка Express приложения
 ├── index.ts                # Точка входа (запуск сервера)
@@ -43,14 +43,14 @@ src/
 
 Проект активно использует **XState** для управления логикой диалогов.
 
-#### 1. Root Machine (`mainStates.ts`)
+#### 1. Root Machine (`main-states.ts`)
 Корневая машина, управляющая навигацией пользователя.
 - **Welcome**: Приветствие и выбор действия.
 - **List Appeals**: Просмотр списка обращений.
 - **Create Appeal**: Запуск мастера создания обращения.
 - **Join Appeal**: Запуск мастера присоединения к обращению.
 
-#### 2. Support Appeal Machine (`supportAppealMachine.ts`)
+#### 2. Support Appeal Machine (`support-appeal-machine.ts`)
 Управляет жизненным циклом обращения со стороны поддержки.
 
 ```mermaid
@@ -70,11 +70,11 @@ stateDiagram-v2
     Closed --> [*]
 ```
 
-#### 3. Master Create Appeal (`masterCreateAppeal.ts`)
+#### 3. Master Create Appeal (`master-create-appeal.ts`)
 Пошаговый мастер создания обращения (Wizard).
 - **Steps**: Описание -> Категория -> ПО -> Критичность -> Вложения -> Подтверждение.
 
-#### 4. Repair Bot Machine (`repairBotMachine.ts`)
+#### 4. Repair Bot Machine (`repair-bot-machine.ts`)
 Простой бот для диагностики проблем.
 
 ```mermaid
@@ -185,21 +185,21 @@ Telegram Webhook → MockConnector.parse() → UnifiedMessage → BotCore.proces
 
 #### 1. **Получение вебхука** 
 Когда мессенджер (например, Telegram) отправляет webhook на сервер:
-- **MainBotController** (`src/controllers/MainBotController.ts`) принимает HTTP запрос через метод `handleWebhook(req, res)`
+- **MainBotController** (`src/controllers/main-bot-controller.ts`) принимает HTTP запрос через метод `handleWebhook(req, res)`
 - Контроллер определяет тип события: текстовое сообщение (`message`) или нажатие кнопки (`callback_query`)
 - В зависимости от типа чата (личный или групповой), вызываются соответствующие методы: `handlePrivateChatMessage()` или `handleSupportGroupMessage()`
 
 #### 2. **Унификация сообщения**
 Для платформо-независимости все входящие сообщения преобразуются в единый формат:
-- **MessengerAggregator** (`src/modules/messenger-aggregator/MessengerAggregator.ts`) получает "сырой" payload через метод `processWebhook(source, payload)`
+- **MessengerAggregator** (`src/modules/messenger-aggregator/messenger-aggregator.ts`) получает "сырой" payload через метод `processWebhook(source, payload)`
 - Агрегатор находит нужный **Connector** (например, `MockConnector`) по имени источника
 - **Connector** парсит payload в объект **UnifiedMessage** через метод `parse(payload)`, который содержит стандартизированные поля: `userId`, `chatId`, `content`, `attachments`, `type`
 - Унифицированное сообщение передаётся всем подписчикам через паттерн Observer
 
 #### 3. **Обработка ядром бота**
-**BotCoreService** (`src/services/BotCoreService.ts`) подписан на события от MessengerAggregator:
+**BotCoreService** (`src/services/bot-core-service.ts`) подписан на события от MessengerAggregator:
 - Метод `processMessage(message: UnifiedMessage)` получает унифицированное сообщение
-- Если есть вложения (`message.attachments`), они загружаются в **MinIO** через функцию `uploadTempFile()` из **s3Service** (`src/services/s3Service.ts`)
+- Если есть вложения (`message.attachments`), они загружаются в **MinIO** через функцию `uploadTempFile()` из **s3Service** (`src/services/s3-service.ts`)
 - Каждое вложение получает уникальный `fileId`, который сохраняется в `attachment.fileId`
 
 #### 4. **Определение контекста обращения**
@@ -212,19 +212,19 @@ BotCoreService анализирует сообщение для определе
 
 **Для обращений в поддержку:**
 - **MainBotController** создаёт или восстанавливает XState actor через `getOrCreateSupportActor(appealId)`
-- **StateService** (`src/services/stateService.ts`) хранит акторы в in-memory кэше (NodeCache) с TTL 1 час
-- Используется машина **supportAppealMachine** (`src/machines/supportAppealMachine.ts`) с состояниями: `Created`, `In_progress`, `Solving`, `Closed`
+- **StateService** (`src/services/state-service.ts`) хранит акторы в in-memory кэше (NodeCache) с TTL 1 час
+- Используется машина **supportAppealMachine** (`src/machines/support-appeal-machine.ts`) с состояниями: `Created`, `In_progress`, `Solving`, `Closed`
 - В зависимости от текущего состояния и входящего события, машина выполняет переходы и actions
 
 **Для пользовательских сессий (личный чат):**
-- **appealRootMachine** (`src/machines/mainStates.ts`) управляет навигацией: приветствие → список обращений → создание/присоединение
-- Машина **masterCreateAppeal** (`src/machines/masterCreateAppeal.ts`) реализует пошаговый wizard создания обращения с состояниями для ввода описания, категории, ПО, критичности и вложений
+- **appealRootMachine** (`src/machines/main-states.ts`) управляет навигацией: приветствие → список обращений → создание/присоединение
+- Машина **masterCreateAppeal** (`src/machines/master-create-appeal.ts`) реализует пошаговый wizard создания обращения с состояниями для ввода описания, категории, ПО, критичности и вложений
 
 #### 6. **Сохранение данных**
 При финальных действиях (например, создание обращения):
 - **BotCoreService** вызывает метод `createNewAppeal(userId, description, tempFileKeys)`
 - Временные файлы перемещаются из `temp/` в `appeals/{appealId}/` через функцию `moveTempToAppeal()` из **s3Service**
-- Данные обращения сохраняются в **DynamoDB** через функцию `createAppeal()` из **dynamoService** (`src/services/dynamoService.ts`)
+- Данные обращения сохраняются в **DynamoDB** через функцию `createAppeal()` из **dynamoService** (`src/services/dynamo-service.ts`)
 
 #### 7. **Отправка ответа пользователю**
 Для отправки сообщений обратно:
@@ -320,7 +320,7 @@ sequenceDiagram
 
 #### MainBotController
 
-**Файл:** `src/controllers/MainBotController.ts`
+**Файл:** `src/controllers/main-bot-controller.ts`
 
 **Назначение:** Основной контроллер для обработки входящих вебхуков от Telegram. Является точкой входа для всех событий мессенджера и отвечает за первичную маршрутизацию сообщений.
 
@@ -343,7 +343,7 @@ sequenceDiagram
 
 #### BotCoreService
 
-**Файл:** `src/services/BotCoreService.ts`
+**Файл:** `src/services/bot-core-service.ts`
 
 **Назначение:** Ядро бота, связывающее MessengerAggregator, машины состояний и сервисы хранения данных. Реализует основную бизнес-логику обработки сообщений.
 
@@ -370,7 +370,7 @@ sequenceDiagram
 
 #### StateService
 
-**Файл:** `src/services/stateService.ts`
+**Файл:** `src/services/state-service.ts`
 
 **Назначение:** Управление состояниями пользователей/обращений в памяти. Использует NodeCache для временного хранения XState акторов с автоматическим истечением (TTL).
 
@@ -408,7 +408,7 @@ interface UserState {
 
 #### s3Service
 
-**Файл:** `src/services/s3Service.ts`
+**Файл:** `src/services/s3-service.ts`
 
 **Назначение:** Работа с MinIO (S3-совместимое хранилище) для загрузки и управления файлами вложений.
 
@@ -433,7 +433,7 @@ interface UserState {
 
 #### dynamoService
 
-**Файл:** `src/services/dynamoService.ts`
+**Файл:** `src/services/dynamo-service.ts`
 
 **Назначение:** Работа с DynamoDB для сохранения данных обращений и другой персистентной информации.
 
@@ -474,7 +474,7 @@ interface AppealContext {
 
 #### MessengerAggregator
 
-**Файл:** `src/modules/messenger-aggregator/MessengerAggregator.ts`
+**Файл:** `src/modules/messenger-aggregator/messenger-aggregator.ts`
 
 **Назначение:** Агрегатор мессенджеров, обеспечивающий платформо-независимость. Регистрирует коннекторы для разных платформ и унифицирует входящие сообщения.
 
@@ -501,7 +501,7 @@ interface AppealContext {
 
 #### Connector (interface)
 
-**Файл:** `src/modules/messenger-aggregator/interfaces/Connector.ts`
+**Файл:** `src/modules/messenger-aggregator/interfaces/connector.ts`
 
 **Назначение:** Интерфейс для реализации коннекторов к различным мессенджерам. Обеспечивает единый контракт для всех платформ.
 
@@ -545,7 +545,7 @@ interface UnifiedMessage {
 
 #### MockConnector
 
-**Файл:** `src/modules/messenger-aggregator/connectors/MockConnector.ts`
+**Файл:** `src/modules/messenger-aggregator/connectors/mock-connector.ts`
 
 **Назначение:** Тестовая реализация интерфейса Connector для разработки и тестирования без реального мессенджера.
 
@@ -570,7 +570,7 @@ interface UnifiedMessage {
 
 #### supportAppealMachine
 
-**Файл:** `src/machines/supportAppealMachine.ts`
+**Файл:** `src/machines/support-appeal-machine.ts`
 
 **Назначение:** Управление жизненным циклом обращения в чате техподдержки. Реализует бизнес-логику переходов между состояниями обращения.
 
@@ -620,7 +620,7 @@ interface SupportAppealContext {
 
 #### appealRootMachine
 
-**Файл:** `src/machines/mainStates.ts`
+**Файл:** `src/machines/main-states.ts`
 
 **Назначение:** Корневая машина для навигации пользователя в личном чате. Управляет переходами между основными разделами: приветствие, список обращений, создание, присоединение.
 
@@ -662,7 +662,7 @@ interface AppealRootContext {
 
 #### masterCreateAppeal
 
-**Файл:** `src/machines/masterCreateAppeal.ts`
+**Файл:** `src/machines/master-create-appeal.ts`
 
 **Назначение:** Пошаговый wizard создания обращения. Ведёт пользователя через этапы заполнения всех необходимых полей.
 
@@ -720,7 +720,7 @@ interface AppealCreateContext {
 
 #### masterJoinAppeal
 
-**Файл:** `src/machines/masterJoinAppeal.ts`
+**Файл:** `src/machines/master-join-appeal.ts`
 
 **Назначение:** Мастер присоединения пользователя к существующему обращению. Позволяет пользователю стать участником обращения.
 
@@ -734,7 +734,7 @@ interface AppealCreateContext {
 
 **UnifiedMessage** (`src/modules/messenger-aggregator/types.ts`) - унифицированный формат сообщения, используемый во всей системе для платформо-независимой обработки.
 
-**UserState** (`src/services/stateService.ts`) - структура для хранения состояния пользователя в кэше, включая XState actor, контекст и историю переходов.
+**UserState** (`src/services/state-service.ts`) - структура для хранения состояния пользователя в кэше, включая XState actor, контекст и историю переходов.
 
 ---
 

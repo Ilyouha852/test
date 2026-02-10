@@ -43,16 +43,16 @@ export async function saveUserProfileToDatabase(
 /* READ */
 export async function retrieveUserProfileFromDatabaseById(
     id: string,
-): Promise<UserProfile | null> {
+): Promise<UserProfile | undefined> {
     const profile = mockUserProfiles.find(profile => profile.id === id);
-    return profile ?? null;
+    return profile ?? undefined;
 }
 
 export async function retrieveUserProfileFromDatabaseByEmail(
     email: string,
-): Promise<UserProfile | null> {
+): Promise<UserProfile | undefined> {
     const profile = mockUserProfiles.find(profile => profile.email === email);
-    return profile ?? null;
+    return profile ?? undefined;
 }
 
 export async function retrieveManyUserProfilesFromDatabase({
@@ -75,9 +75,9 @@ export async function updateUserProfileInDatabaseById({
 }: {
     id: string;
     data: UserProfileUpdateInput;
-}): Promise<UserProfile | null> {
+}): Promise<UserProfile | undefined> {
     const index = mockUserProfiles.findIndex(profile => profile.id === id);
-    if (index === -1) return null;
+    if (index === -1) return undefined;
 
     const existing = mockUserProfiles[index]!; // Safe because we checked index !== -1
     const updated: UserProfile = {
@@ -96,10 +96,10 @@ export async function updateUserProfileInDatabaseById({
 /* DELETE */
 export async function deleteUserProfileFromDatabaseById(
     id: string,
-): Promise<UserProfile | null> {
+): Promise<UserProfile | undefined> {
     const index = mockUserProfiles.findIndex(profile => profile.id === id);
-    if (index === -1) return null;
+    if (index === -1) return undefined;
 
     const profile = mockUserProfiles.splice(index, 1)[0];
-    return profile ?? null;
+    return profile ?? undefined;
 }

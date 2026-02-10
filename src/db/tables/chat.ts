@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type Chat,
+    type ChatCreateInput,
     createEntityId,
     METADATA_SK,
     TABLE_NAMES,
-    type Chat,
-    type ChatCreateInput,
 } from '../types.js';
 import {
     deleteItem,
@@ -47,7 +47,7 @@ export async function createChat(input: ChatCreateInput): Promise<Chat> {
     return chat;
 }
 
-export async function getChatById(chatId: string): Promise<Chat | null> {
+export async function getChatById(chatId: string): Promise<Chat | undefined> {
     return getItem<Chat>(TABLE_NAMES.CHATS, chatId);
 }
 

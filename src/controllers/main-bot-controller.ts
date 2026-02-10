@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
 import { createActor } from 'xstate';
 
-import { appealRootMachine } from '../machines/mainStates.js';
+import { appealRootMachine } from '../machines/main-states.js';
+import type { MessengerAggregator } from '../modules/messenger-aggregator/messenger-aggregator.js';
 import type { UnifiedMessage } from '../modules/messenger-aggregator/types.js';
-import type { MessengerAggregator } from '../modules/messenger-aggregator/MessengerAggregator.js';
-import stateService from '../services/stateService.js';
+import stateService from '../services/state-service.js';
 
 /**
  * MainBotController - Обрабатывает полный цикл обработки вебхуков

@@ -1,4 +1,5 @@
 import 'dotenv/config';
+
 import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb';
 
 const dynamodb = new DynamoDBClient({

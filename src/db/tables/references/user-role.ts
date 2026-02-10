@@ -3,8 +3,8 @@ import { createId } from '@paralleldrive/cuid2';
 import {
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
     type ReferenceCreateInput,
+    TABLE_NAMES,
     type UserRole,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
@@ -26,13 +26,13 @@ export async function createUserRole(
 
 export async function getUserRoleById(
     roleId: string,
-): Promise<UserRole | null> {
+): Promise<UserRole | undefined> {
     return getItem<UserRole>(TABLE_NAMES.USER_ROLES, roleId);
 }
 
 export async function getUserRoleByName(
     name: string,
-): Promise<UserRole | null> {
+): Promise<UserRole | undefined> {
     const roles = await queryByGSI<UserRole>(
         TABLE_NAMES.USER_ROLES,
         'NameIndex',
@@ -40,7 +40,7 @@ export async function getUserRoleByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return roles[0] || null;
+    return roles[0] || undefined;
 }
 
 export async function deleteUserRole(roleId: string): Promise<void> {

@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type AppealCriticality,
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
-    type AppealCriticality,
     type ReferenceCreateInput,
+    TABLE_NAMES,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
 
@@ -26,7 +26,7 @@ export async function createAppealCriticality(
 
 export async function getAppealCriticalityById(
     criticalityId: string,
-): Promise<AppealCriticality | null> {
+): Promise<AppealCriticality | undefined> {
     return getItem<AppealCriticality>(
         TABLE_NAMES.APPEAL_CRITICALITY,
         criticalityId,
@@ -35,7 +35,7 @@ export async function getAppealCriticalityById(
 
 export async function getAppealCriticalityByName(
     name: string,
-): Promise<AppealCriticality | null> {
+): Promise<AppealCriticality | undefined> {
     const criticality = await queryByGSI<AppealCriticality>(
         TABLE_NAMES.APPEAL_CRITICALITY,
         'NameIndex',
@@ -43,7 +43,7 @@ export async function getAppealCriticalityByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return criticality[0] || null;
+    return criticality[0] || undefined;
 }
 
 export async function deleteAppealCriticality(

@@ -1,6 +1,6 @@
-import counterService from './services/counterService.js';
+import counterService from './services/counter-service.js';
 
-async function testDynamoDB() {
+async function testDynamoDb() {
     console.log('🧪 Testing DynamoDB connection with DynamoDB Toolbox...');
 
     try {
@@ -25,4 +25,4 @@ async function testDynamoDB() {
     }
 }
 
-testDynamoDB();
+testDynamoDb();

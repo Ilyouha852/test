@@ -1,6 +1,6 @@
 import { GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
-import { docClient, TABLE_NAME } from '../config/dynamodb.js';
+import { docClient, TABLE_NAME } from '../config/dynamo-db.js';
 
 export class CounterService {
     async getCurrentCount(): Promise<number> {

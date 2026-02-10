@@ -82,7 +82,7 @@ function isTokenValid(
 ): token is { id: string; email: string } {
     return (
         typeof token === 'object' &&
-        token !== null &&
+        token !== undefined &&
         'id' in token &&
         'email' in token
     );

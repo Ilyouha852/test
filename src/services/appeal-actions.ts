@@ -1,6 +1,6 @@
-import type { AppealContext } from './dynamoService.js';
-import { createAppeal } from './dynamoService.js';
-import { moveTempToAppeal } from './s3Service.js';
+import type { AppealContext } from './dynamo-service.js';
+import { createAppeal } from './dynamo-service.js';
+import { moveTempToAppeal } from './s3-service.js';
 
 export const saveAppealToDB = async (ctx: AppealContext) => {
     const appealId = await createAppeal(ctx);

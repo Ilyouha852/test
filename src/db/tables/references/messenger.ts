@@ -2,10 +2,10 @@ import { createId } from '@paralleldrive/cuid2';
 
 import {
     createEntityId,
-    METADATA_SK,
-    TABLE_NAMES,
     type Messenger,
+    METADATA_SK,
     type ReferenceCreateInput,
+    TABLE_NAMES,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
 
@@ -26,13 +26,13 @@ export async function createMessenger(
 
 export async function getMessengerById(
     messengerId: string,
-): Promise<Messenger | null> {
+): Promise<Messenger | undefined> {
     return getItem<Messenger>(TABLE_NAMES.MESSENGERS, messengerId);
 }
 
 export async function getMessengerByName(
     name: string,
-): Promise<Messenger | null> {
+): Promise<Messenger | undefined> {
     const messengers = await queryByGSI<Messenger>(
         TABLE_NAMES.MESSENGERS,
         'NameIndex',
@@ -40,7 +40,7 @@ export async function getMessengerByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return messengers[0] || null;
+    return messengers[0] || undefined;
 }
 
 export async function deleteMessenger(messengerId: string): Promise<void> {

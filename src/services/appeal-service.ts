@@ -1,6 +1,6 @@
 import { QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
-import { docClient, TABLE_NAME } from '../config/dynamodb.js';
+import { docClient, TABLE_NAME } from '../config/dynamo-db.js';
 
 export interface Appeal {
     id: string;
@@ -19,7 +19,7 @@ const ddb = docClient;
  * Если существует GSI `status-createdAt-index`, он будет использован; в противном случае используется Scan.
  */
 export async function listRequestsForUser(
-    currentUserId: string | null,
+    currentUserId: string | undefined,
 ): Promise<string> {
     if (!currentUserId)
         return 'Необходимо авторизоваться, чтобы увидеть обращения.';

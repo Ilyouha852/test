@@ -1,9 +1,9 @@
 import 'dotenv/config';
 
-import { messengerAggregator } from '../modules/messenger-aggregator/MessengerAggregator.js';
-import { MockConnector } from '../modules/messenger-aggregator/connectors/MockConnector.js';
-import { WebServer } from '../modules/messenger-aggregator/webServer.js';
-import { initDynamoDB } from '../utils/initDynamoDB.js';
+import { MockConnector } from '../modules/messenger-aggregator/connectors/mock-connector.js';
+import { messengerAggregator } from '../modules/messenger-aggregator/messenger-aggregator.js';
+import { WebServer } from '../modules/messenger-aggregator/web-server.js';
+import { initDynamoDb } from '../utils/init-dynamo-db.js';
 
 /**
  * End-to-end test for complete webhook processing cycle
@@ -14,7 +14,7 @@ async function testFullWebhookCycle() {
 
     // Step 1: Initialize DynamoDB
     console.log('--- Step 1: Initialize DynamoDB ---');
-    await initDynamoDB();
+    await initDynamoDb();
 
     // Step 2: Setup infrastructure
     console.log('\n--- Step 2: Setup MessengerAggregator and WebServer ---');

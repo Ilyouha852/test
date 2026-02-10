@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type AppealSoftware,
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
-    type AppealSoftware,
     type ReferenceCreateInput,
+    TABLE_NAMES,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
 
@@ -26,13 +26,13 @@ export async function createAppealSoftware(
 
 export async function getAppealSoftwareById(
     softwareId: string,
-): Promise<AppealSoftware | null> {
+): Promise<AppealSoftware | undefined> {
     return getItem<AppealSoftware>(TABLE_NAMES.APPEAL_SOFTWARE, softwareId);
 }
 
 export async function getAppealSoftwareByName(
     name: string,
-): Promise<AppealSoftware | null> {
+): Promise<AppealSoftware | undefined> {
     const software = await queryByGSI<AppealSoftware>(
         TABLE_NAMES.APPEAL_SOFTWARE,
         'NameIndex',
@@ -40,7 +40,7 @@ export async function getAppealSoftwareByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return software[0] || null;
+    return software[0] || undefined;
 }
 
 export async function deleteAppealSoftware(softwareId: string): Promise<void> {

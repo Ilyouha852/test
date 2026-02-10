@@ -1,8 +1,9 @@
-import express, { type Express, type Request, type Response } from 'express';
-import http from 'http';
+import http from 'node:http';
 
-import MainBotController from '../../controllers/MainBotController.js';
-import { MessengerAggregator } from './MessengerAggregator.js';
+import express, { type Express, type Request, type Response } from 'express';
+
+import MainBotController from '../../controllers/main-bot-controller.js';
+import { MessengerAggregator } from './messenger-aggregator.js';
 
 export class WebServer {
     private app: Express;
@@ -12,7 +13,7 @@ export class WebServer {
     private baseUrl: string; // Добавляем поле для хранения URL
     public isMessageReceived: boolean = false;
     private messageReceivedPromise: Promise<void>;
-    private resolveMessageReceived: (() => void) | null = null;
+    private resolveMessageReceived: (() => void) | undefined = undefined;
 
     constructor(messengerAggregator: MessengerAggregator, baseUrl?: string) {
         this.messengerAggregator = messengerAggregator;
@@ -50,7 +51,7 @@ export class WebServer {
             // Сигнализировать о получении сообщения
             if (this.resolveMessageReceived) {
                 this.resolveMessageReceived();
-                this.resolveMessageReceived = null;
+                this.resolveMessageReceived = undefined;
             }
         } catch (error) {
             console.error('❌ Ошибка обработки сообщения:', error);

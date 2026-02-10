@@ -5,9 +5,9 @@ import { assign, createMachine } from 'xstate';
  */
 export interface SupportAppealContext {
     appealId: string;
-    accepterEmployeeId: string | null; // ID принявшего сотрудника (Accepter_employee)
-    accepterEmployeeName: string | null;
-    solutionText: string | null;
+    accepterEmployeeId: string | undefined; // ID принявшего сотрудника (Accepter_employee)
+    accepterEmployeeName: string | undefined;
+    solutionText: string | undefined;
 }
 
 /**
@@ -46,9 +46,9 @@ export const supportAppealMachine = createMachine(
 
         context: ({ input }) => ({
             appealId: input?.appealId || '',
-            accepterEmployeeId: null,
-            accepterEmployeeName: null,
-            solutionText: null,
+            accepterEmployeeId: undefined,
+            accepterEmployeeName: undefined,
+            solutionText: undefined,
         }),
 
         states: {
@@ -134,34 +134,34 @@ export const supportAppealMachine = createMachine(
             assignEmployee: assign({
                 accepterEmployeeId: ({ event }) => {
                     if (event.type === 'TAKE_WORK') return event.userId;
-                    return null;
+                    return;
                 },
                 accepterEmployeeName: ({ event }) => {
                     if (event.type === 'TAKE_WORK') return event.userName;
-                    return null;
+                    return;
                 },
             }),
 
             reassignEmployee: assign({
                 accepterEmployeeId: ({ event }) => {
                     if (event.type === 'REASSIGN') return event.newUserId;
-                    return null;
+                    return;
                 },
                 accepterEmployeeName: ({ event }) => {
                     if (event.type === 'REASSIGN') return event.newUserName;
-                    return null;
+                    return;
                 },
             }),
 
             releaseEmployee: assign({
-                accepterEmployeeId: null,
-                accepterEmployeeName: null,
+                accepterEmployeeId: undefined,
+                accepterEmployeeName: undefined,
             }),
 
             saveSolution: assign({
                 solutionText: ({ event }) => {
                     if (event.type === 'SUBMIT_SOLUTION') return event.text;
-                    return null;
+                    return;
                 },
             }),
 
