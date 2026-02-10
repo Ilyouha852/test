@@ -12,8 +12,8 @@ export default {
   requirePragma: false,
   semi: true,
   singleQuote: true,
-  tabWidth: 2,
+  tabWidth: 4,
   trailingComma: 'all',
   useTabs: false,
-  endOfLine: 'auto', // ← добавили для Windows
+  endOfLine: 'lf',
 };
