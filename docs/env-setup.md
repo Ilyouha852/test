@@ -30,7 +30,7 @@
 ],
 ```
 
-Клонируем свой форк с гитхаба (<span style="color: red">НЕ ВСЕ ФОРК ИЛЬИ КЛОНИРУЮТ, А КАЖДЫЙ СВОЙ</span>), создаем файл ```.env``` и ```docker-compose.local.yml``` и копируем следущее
+Клонируем свой форк с гитхаба (<span style="color: red">НЕ ВСЕ ФОРК ИЛЬИ КЛОНИРУЮТ, А КАЖДЫЙ СВОЙ</span>), пропиываем в консоль ```yarn install``` и создаем файл ```.env``` и ```docker-compose.local.yml``` и копируем следущее
 
 ```env
 # .env
@@ -53,13 +53,13 @@ NODE_ENV=development
 
 # DynamoDB Configuration
 DYNAMODB_TABLE=support-bot-table
-DYNAMODB_ENDPOINT=localhost:8000
+DYNAMODB_ENDPOINT="http://localhost:8000"
 DYNAMODB_REGION=us-east-1
 AWS_ACCESS_KEY_ID=""
 AWS_SECRET_ACCESS_KEY=""
 
 # MinIO Configuration
-MINIO_ENDPOINT=localhost:9001
+MINIO_ENDPOINT="http://localhost:9001"
 MINIO_ACCESS_KEY=12345678
 MINIO_SECRET_KEY=12345678
 MINIO_REGION=us-east-1

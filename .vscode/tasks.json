@@ -4,7 +4,7 @@
         {
             "label": "ESLint: Lint All Files",
             "type": "shell",
-            "command": "yarn eslint . --fix",
+            "command": "yarn eslint .",
             "problemMatcher": [
                 "$eslint-stylish"
             ]
