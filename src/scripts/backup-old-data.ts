@@ -1,5 +1,6 @@
+import { writeFileSync } from 'node:fs';
+
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
-import { writeFileSync } from 'fs';
 
 import { docClient } from '../db/dynamodb.js';
 
@@ -21,7 +22,7 @@ async function backupOldData() {
         };
 
         const filename = `backup-${oldTableName}-${Date.now()}.json`;
-        writeFileSync(filename, JSON.stringify(backup, null, 2));
+        writeFileSync(filename, JSON.stringify(backup, undefined, 2));
 
         console.log(`✅ Backup saved to: ${filename}`);
         console.log(`📊 Backed up ${backup.itemCount} items`);
@@ -32,7 +33,7 @@ async function backupOldData() {
 
 backupOldData()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
         console.error('Fatal error:', error);
         process.exit(1);
     });

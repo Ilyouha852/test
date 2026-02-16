@@ -3,16 +3,11 @@ import { createId } from '@paralleldrive/cuid2';
 import {
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
     type Solution,
     type SolutionCreateInput,
+    TABLE_NAMES,
 } from '../types.js';
-import {
-    deleteItem,
-    getItem,
-    putItem,
-    updateItem,
-} from './base.js';
+import { deleteItem, getItem, putItem, updateItem } from './base.js';
 
 export async function createSolution(
     input: SolutionCreateInput,
@@ -34,7 +29,7 @@ export async function createSolution(
 
 export async function getSolutionById(
     solutionId: string,
-): Promise<Solution | null> {
+): Promise<Solution | undefined> {
     return getItem<Solution>(TABLE_NAMES.SOLUTIONS, solutionId);
 }
 

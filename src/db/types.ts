@@ -157,7 +157,6 @@ export interface UserState {
     updatedAt: string;
 }
 
-
 // ============================================================================
 // Table Names
 // ============================================================================
@@ -290,4 +289,3 @@ export interface UserStateCreateInput {
 export interface ReferenceCreateInput {
     name: string;
 }
-

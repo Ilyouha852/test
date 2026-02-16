@@ -3,10 +3,10 @@ import { Router } from 'express';
 import { requireAuthentication } from '../../middleware/require-authentication.js';
 import { asyncHandler } from '../../utils/async-handler.js';
 import {
-  deleteUserProfile,
-  getAllUserProfiles,
-  getUserProfileById,
-  updateUserProfile,
+    deleteUserProfile,
+    getAllUserProfiles,
+    getUserProfileById,
+    updateUserProfile,
 } from './user-profile-controller.js';
 
 const router = Router();

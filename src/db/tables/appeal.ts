@@ -1,14 +1,13 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type Appeal,
+    type AppealCreateInput,
     createEntityId,
     METADATA_SK,
     TABLE_NAMES,
-    type Appeal,
-    type AppealCreateInput,
 } from '../types.js';
 import {
-    deleteItem,
     getItem,
     putItem,
     queryByGSI,
@@ -26,10 +25,13 @@ export async function createAppeal(input: AppealCreateInput): Promise<Appeal> {
         validateFKExists(TABLE_NAMES.APPEAL_CATEGORIES, input.appealCategoryId),
         validateFKExists(TABLE_NAMES.APPEAL_SOFTWARE, input.appealSoftwareId),
         validateFKExists(TABLE_NAMES.APPEAL_STATUSES, input.appealStatusId),
-        validateFKExists(TABLE_NAMES.APPEAL_CRITICALITY, input.appealCriticalityId),
+        validateFKExists(
+            TABLE_NAMES.APPEAL_CRITICALITY,
+            input.appealCriticalityId,
+        ),
     ]);
 
-    if (validations.some((v) => !v)) {
+    if (validations.some(v => !v)) {
         throw new Error('One or more foreign keys are invalid');
     }
 
@@ -66,7 +68,7 @@ export async function createAppeal(input: AppealCreateInput): Promise<Appeal> {
 
 export async function getAppealById(
     appealId: string,
-): Promise<Appeal | null> {
+): Promise<Appeal | undefined> {
     return getItem<Appeal>(TABLE_NAMES.APPEALS, appealId);
 }
 

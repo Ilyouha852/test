@@ -1,4 +1,5 @@
 import 'dotenv/config';
+
 import { CreateTableCommand } from '@aws-sdk/client-dynamodb';
 
 import { dynamoDBClient } from '../db/dynamodb.js';
@@ -154,7 +155,7 @@ const tableDefinitions = [
         TABLE_NAMES.APPEAL_STATUSES,
         TABLE_NAMES.APPEAL_CRITICALITY,
         TABLE_NAMES.USER_RELATIONS,
-    ].map((tableName) => ({
+    ].map(tableName => ({
         TableName: tableName,
         KeySchema: [
             { AttributeName: 'id', KeyType: 'HASH' },
@@ -330,9 +331,7 @@ const tableDefinitions = [
         GlobalSecondaryIndexes: [
             {
                 IndexName: 'UserIdIndex',
-                KeySchema: [
-                    { AttributeName: 'userId', KeyType: 'HASH' },
-                ],
+                KeySchema: [{ AttributeName: 'userId', KeyType: 'HASH' }],
                 Projection: { ProjectionType: 'ALL' },
             },
             {
@@ -377,7 +376,10 @@ export async function initAllTables() {
     console.log('🔧 Initializing all DynamoDB tables...');
     console.log('  Endpoint:', process.env.DYNAMODB_ENDPOINT);
     console.log('  Region:', process.env.DYNAMODB_REGION);
-    console.log('  AccessKey:', process.env.AWS_ACCESS_KEY_ID ? '***' : 'undefined');
+    console.log(
+        '  AccessKey:',
+        process.env.AWS_ACCESS_KEY_ID ? '***' : 'undefined',
+    );
 
     const results = {
         created: [] as string[],
@@ -402,7 +404,7 @@ export async function initAllTables() {
                 });
                 console.error(
                     `❌ Error creating table ${tableDef.TableName}:`,
-                    JSON.stringify(error, null, 2),
+                    JSON.stringify(error, undefined, 2),
                 );
             }
         }
@@ -415,9 +417,9 @@ export async function initAllTables() {
 
     if (results.errors.length > 0) {
         console.log('\n❌ Failed tables:');
-        results.errors.forEach(({ table, error }) => {
+        for (const { table, error } of results.errors) {
             console.log(`  - ${table}: ${error}`);
-        });
+        }
     }
 
     console.log('\n🎉 Table initialization complete!');
@@ -427,7 +429,7 @@ export async function initAllTables() {
 // Run unconditionally
 initAllTables()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
         console.error('Fatal error:', error);
         process.exit(1);
     });

@@ -1,5 +1,3 @@
-import { createId } from '@paralleldrive/cuid2';
-
 import {
     createEntityId,
     METADATA_SK,
@@ -7,12 +5,7 @@ import {
     type UserState,
     type UserStateCreateInput,
 } from '../types.js';
-import {
-    deleteItem,
-    getItem,
-    putItem,
-    updateItem,
-} from './base.js';
+import { deleteItem, getItem, putItem, updateItem } from './base.js';
 
 // Create User State (Save Snapshot)
 export async function createUserState(
@@ -40,7 +33,7 @@ export async function createUserState(
 // Get User State by UserId
 export async function getUserState(
     userId: string,
-): Promise<UserState | null> {
+): Promise<UserState | undefined> {
     const id = createEntityId('USER_STATE', userId);
     return getItem<UserState>(TABLE_NAMES.USER_STATES, id);
 }

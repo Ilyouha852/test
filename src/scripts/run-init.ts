@@ -1,11 +1,11 @@
-import { initDynamoDB } from '../utils/initDynamoDB.js';
+import { initDynamoDb } from '../utils/init-dynamo-db.js';
 
 (async () => {
-  try {
-    await initDynamoDB();
-    console.log('Init finished');
-  } catch (error) {
-    console.error('Init failed:', error);
-    process.exit(1);
-  }
+    try {
+        await initDynamoDb();
+        console.log('Init finished');
+    } catch (error) {
+        console.error('Init failed:', error);
+        process.exit(1);
+    }
 })();

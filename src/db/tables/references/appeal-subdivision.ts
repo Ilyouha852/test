@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type AppealSubdivision,
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
-    type AppealSubdivision,
     type ReferenceCreateInput,
+    TABLE_NAMES,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
 
@@ -26,7 +26,7 @@ export async function createAppealSubdivision(
 
 export async function getAppealSubdivisionById(
     subdivisionId: string,
-): Promise<AppealSubdivision | null> {
+): Promise<AppealSubdivision | undefined> {
     return getItem<AppealSubdivision>(
         TABLE_NAMES.APPEAL_SUBDIVISIONS,
         subdivisionId,
@@ -35,7 +35,7 @@ export async function getAppealSubdivisionById(
 
 export async function getAppealSubdivisionByName(
     name: string,
-): Promise<AppealSubdivision | null> {
+): Promise<AppealSubdivision | undefined> {
     const subdivisions = await queryByGSI<AppealSubdivision>(
         TABLE_NAMES.APPEAL_SUBDIVISIONS,
         'NameIndex',
@@ -43,7 +43,7 @@ export async function getAppealSubdivisionByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return subdivisions[0] || null;
+    return subdivisions[0] || undefined;
 }
 
 export async function deleteAppealSubdivision(

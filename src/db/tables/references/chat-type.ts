@@ -1,11 +1,11 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
+    type ChatType,
     createEntityId,
     METADATA_SK,
-    TABLE_NAMES,
-    type ChatType,
     type ReferenceCreateInput,
+    TABLE_NAMES,
 } from '../../types.js';
 import { deleteItem, getItem, putItem, queryByGSI } from '../base.js';
 
@@ -26,13 +26,13 @@ export async function createChatType(
 
 export async function getChatTypeById(
     chatTypeId: string,
-): Promise<ChatType | null> {
+): Promise<ChatType | undefined> {
     return getItem<ChatType>(TABLE_NAMES.CHAT_TYPES, chatTypeId);
 }
 
 export async function getChatTypeByName(
     name: string,
-): Promise<ChatType | null> {
+): Promise<ChatType | undefined> {
     const chatTypes = await queryByGSI<ChatType>(
         TABLE_NAMES.CHAT_TYPES,
         'NameIndex',
@@ -40,7 +40,7 @@ export async function getChatTypeByName(
         { ':name': name },
         { '#name': 'name' },
     );
-    return chatTypes[0] || null;
+    return chatTypes[0] || undefined;
 }
 
 export async function deleteChatType(chatTypeId: string): Promise<void> {

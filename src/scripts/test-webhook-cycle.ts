@@ -1,9 +1,9 @@
 import 'dotenv/config';
 
-import { messengerAggregator } from '../modules/messenger-aggregator/MessengerAggregator.js';
-import { MockConnector } from '../modules/messenger-aggregator/connectors/MockConnector.js';
-import { WebServer } from '../modules/messenger-aggregator/webServer.js';
-import { initDynamoDB } from '../utils/initDynamoDB.js';
+import { MockConnector } from '../modules/messenger-aggregator/connectors/mock-connector.js';
+import { messengerAggregator } from '../modules/messenger-aggregator/messenger-aggregator.js';
+import { WebServer } from '../modules/messenger-aggregator/web-server.js';
+import { initDynamoDb } from '../utils/init-dynamo-db.js';
 
 /**
  * End-to-end test for complete webhook processing cycle
@@ -14,7 +14,7 @@ async function testFullWebhookCycle() {
 
     // Step 1: Initialize DynamoDB
     console.log('--- Step 1: Initialize DynamoDB ---');
-    await initDynamoDB();
+    await initDynamoDb();
 
     // Step 2: Setup infrastructure
     console.log('\n--- Step 2: Setup MessengerAggregator and WebServer ---');
@@ -27,7 +27,7 @@ async function testFullWebhookCycle() {
     console.log(`✅ WebServer started on port ${port}`);
 
     // Wait a moment for server to be ready
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     // Step 3: Send first message (new user)
     console.log('\n--- Step 3: Send первое сообщение (новый пользователь) ---');
@@ -46,7 +46,7 @@ async function testFullWebhookCycle() {
     console.log(`Response 1:`, result1);
 
     // Wait for processing
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Step 4: Send OPEN_LIST command
     console.log('\n--- Step 4: Send OPEN_LIST command ---');
@@ -63,7 +63,7 @@ async function testFullWebhookCycle() {
     const result2 = await response2.json();
     console.log(`Response 2:`, result2);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Step 5: Send CREATE command
     console.log('\n--- Step 5: Send OPEN_CREATE command ---');
@@ -80,7 +80,7 @@ async function testFullWebhookCycle() {
     const result3 = await response3.json();
     console.log(`Response 3:`, result3);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Step 6: Send BACK command
     console.log('\n--- Step 6: Send BACK command ---');
@@ -97,7 +97,9 @@ async function testFullWebhookCycle() {
     const result4 = await response4.json();
     console.log(`Response 4:`, result4);
 
-    console.log('\n🎉 Test completed! Check console output above for state transitions.');
+    console.log(
+        '\n🎉 Test completed! Check console output above for state transitions.',
+    );
     console.log(
         '\nExpected flow: welcome -> listAppeals -> createAppeal -> welcome',
     );

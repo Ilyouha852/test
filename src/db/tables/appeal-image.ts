@@ -1,12 +1,12 @@
 import { createId } from '@paralleldrive/cuid2';
 
 import {
-    createEntityId,
-    TABLE_NAMES,
     type AppealImage,
     type AppealImageCreateInput,
+    createEntityId,
+    TABLE_NAMES,
 } from '../types.js';
-import { deleteItem, getItem, putItem, queryByGSI } from './base.js';
+import { putItem, queryByGSI } from './base.js';
 
 export async function createAppealImage(
     input: AppealImageCreateInput,
@@ -28,7 +28,7 @@ export async function createAppealImage(
 
 export async function getAppealImageById(
     imageId: string,
-): Promise<AppealImage | null> {
+): Promise<AppealImage | undefined> {
     // Note: This might be tricky if PK is appealId.
     // If we need to get by ImageId, we should use GSI.
     const images = await queryByGSI<AppealImage>(
@@ -37,7 +37,7 @@ export async function getAppealImageById(
         'id = :id',
         { ':id': imageId },
     );
-    return images[0] || null;
+    return images[0] || undefined;
 }
 
 export async function getImagesForAppeal(

@@ -1,8 +1,9 @@
 import 'dotenv/config';
+
 import { createId } from '@paralleldrive/cuid2';
 
-import { createEntityId, METADATA_SK, TABLE_NAMES } from '../db/types.js';
 import { putItem } from '../db/tables/base.js';
+import { createEntityId, METADATA_SK, TABLE_NAMES } from '../db/types.js';
 
 // ✅ Данные из официальных словарей терминов проекта
 const referenceData = {
@@ -58,7 +59,9 @@ const referenceData = {
 };
 
 async function seedReferenceData() {
-    console.log('🌱 Seeding reference data with correct project terminology...');
+    console.log(
+        '🌱 Seeding reference data with correct project terminology...',
+    );
 
     // Seed Roles
     console.log('\n📝 Creating User Roles...');
@@ -72,15 +75,25 @@ async function seedReferenceData() {
     console.log('\n📝 Creating Appeal Statuses (from status dictionary)...');
     for (const name of referenceData.statuses) {
         const id = createEntityId('STATUS', createId());
-        await putItem(TABLE_NAMES.APPEAL_STATUSES, { id, sk: METADATA_SK, name });
+        await putItem(TABLE_NAMES.APPEAL_STATUSES, {
+            id,
+            sk: METADATA_SK,
+            name,
+        });
         console.log(`  ✅ ${name}`);
     }
 
     // Seed Appeal Categories (из словаря категорий)
-    console.log('\n📝 Creating Appeal Categories (from category dictionary)...');
+    console.log(
+        '\n📝 Creating Appeal Categories (from category dictionary)...',
+    );
     for (const name of referenceData.categories) {
         const id = createEntityId('CATEGORY', createId());
-        await putItem(TABLE_NAMES.APPEAL_CATEGORIES, { id, sk: METADATA_SK, name });
+        await putItem(TABLE_NAMES.APPEAL_CATEGORIES, {
+            id,
+            sk: METADATA_SK,
+            name,
+        });
         console.log(`  ✅ ${name}`);
     }
 
@@ -88,15 +101,25 @@ async function seedReferenceData() {
     console.log('\n📝 Creating Software...');
     for (const name of referenceData.software) {
         const id = createEntityId('SOFTWARE', createId());
-        await putItem(TABLE_NAMES.APPEAL_SOFTWARE, { id, sk: METADATA_SK, name });
+        await putItem(TABLE_NAMES.APPEAL_SOFTWARE, {
+            id,
+            sk: METADATA_SK,
+            name,
+        });
         console.log(`  ✅ ${name}`);
     }
 
     // Seed Criticality Levels (из словаря критичностей)
-    console.log('\n📝 Creating Criticality Levels (from criticality dictionary)...');
+    console.log(
+        '\n📝 Creating Criticality Levels (from criticality dictionary)...',
+    );
     for (const name of referenceData.criticality) {
         const id = createEntityId('CRITICALITY', createId());
-        await putItem(TABLE_NAMES.APPEAL_CRITICALITY, { id, sk: METADATA_SK, name });
+        await putItem(TABLE_NAMES.APPEAL_CRITICALITY, {
+            id,
+            sk: METADATA_SK,
+            name,
+        });
         console.log(`  ✅ ${name}`);
     }
 
@@ -104,7 +127,11 @@ async function seedReferenceData() {
     console.log('\n📝 Creating Subdivisions...');
     for (const name of referenceData.subdivisions) {
         const id = createEntityId('SUBDIVISION', createId());
-        await putItem(TABLE_NAMES.APPEAL_SUBDIVISIONS, { id, sk: METADATA_SK, name });
+        await putItem(TABLE_NAMES.APPEAL_SUBDIVISIONS, {
+            id,
+            sk: METADATA_SK,
+            name,
+        });
         console.log(`  ✅ ${name}`);
     }
 
@@ -112,7 +139,11 @@ async function seedReferenceData() {
     console.log('\n📝 Creating User Relations (from relations dictionary)...');
     for (const name of referenceData.relations) {
         const id = createEntityId('RELATION', createId());
-        await putItem(TABLE_NAMES.USER_RELATIONS, { id, sk: METADATA_SK, name });
+        await putItem(TABLE_NAMES.USER_RELATIONS, {
+            id,
+            sk: METADATA_SK,
+            name,
+        });
         console.log(`  ✅ ${name}`);
     }
 
@@ -144,7 +175,7 @@ async function seedReferenceData() {
 
 seedReferenceData()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
         console.error('Error seeding data:', error);
         process.exit(1);
     });
