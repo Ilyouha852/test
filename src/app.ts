@@ -4,10 +4,6 @@ import express from 'express';
 import morgan from 'morgan';
 
 import { apiV1Router } from './routes.js';
-<<<<<<< HEAD
-=======
-import { initDynamoDb } from './utils/init-dynamo-db.js';
->>>>>>> 49ffccd303c29fa47674851265707533732e3fbf
 
 export function buildApp(): Express {
     const app = express();
@@ -16,12 +12,6 @@ export function buildApp(): Express {
     app.use(express.json());
     app.use(cookieParser());
 
-<<<<<<< HEAD
-=======
-    // Инициализируем DynamoDB при запуске приложения
-    initDynamoDb().catch(console.error);
-
->>>>>>> 49ffccd303c29fa47674851265707533732e3fbf
     // Простой гарантированный корневой route
     app.get('/', (req, res) => {
         res.send(`
