@@ -1,0 +1,27 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+RUN echo "NODE_ENV=production" > .env && \
+    echo "PORT=3007" >> .env && \
+    echo "DYNAMODB_TABLE=support-bot-table" >> .env && \
+    echo "DYNAMODB_ENDPOINT=http://dynamodb:8000" >> .env && \
+    echo "DYNAMODB_REGION=us-east-1" >> .env && \
+    echo "AWS_ACCESS_KEY_ID=fake" >> .env && \
+    echo "AWS_SECRET_ACCESS_KEY=fake" >> .env && \
+    echo "MINIO_ENDPOINT=http://minio:9000" >> .env && \
+    echo "MINIO_ACCESS_KEY=minioadmin" >> .env && \
+    echo "MINIO_SECRET_KEY=minioadmin" >> .env && \
+    echo "MINIO_REGION=us-east-1" >> .env && \
+    echo "MINIO_BUCKET=support-bot-files" >> .env
+
+EXPOSE 3007
+
+CMD cd dist/scripts && node init-all-tables.js && cd /app && npm run dev
