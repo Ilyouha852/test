@@ -179,7 +179,16 @@ export const TABLE_NAMES = {
     CHAT_TYPES: 'support_bot_chat_types',
     APPEAL_IMAGES: 'support_bot_appeal_images',
     USER_STATES: 'support_bot_user_states',
+    SUPPORT_STAFF: 'support_bot_support_staff',
 } as const;
+
+export interface SupportStaff {
+    id: string; // PK: STAFF#<login>
+    sk: string; // SK: METADATA
+    login: string;
+    name: string;
+    createdAt: string;
+}
 
 // ============================================================================
 // ID Prefixes
@@ -203,6 +212,7 @@ export const ID_PREFIXES = {
     CHATTYPE: 'CHATTYPE',
     IMAGE: 'IMAGE',
     USER_STATE: 'USER_STATE',
+    SUPPORT_STAFF: 'STAFF',
 } as const;
 
 export const METADATA_SK = 'METADATA';
