@@ -1,7 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { verifyJwtToken } from '../features/user-authentication/user-authentication-helpers.js';
-
 export function authenticateToken(
     request: Request,
     response: Response,

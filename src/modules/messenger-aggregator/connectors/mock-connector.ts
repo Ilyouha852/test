@@ -11,17 +11,16 @@ export class MockConnector implements Connector {
         }
 
         return {
-            id: `msg_${Date.now()}`,
-            source: this.name,
-            userId: payload.sender_nick
-                ? `user_${payload.sender_nick}`
-                : 'user_123',
-            userName: payload.sender_nick || 'Тестовый Пользователь',
-            chatId: payload.chat_id || 'chat_123',
-            content: payload.text,
-            type: 'text',
-            timestamp: new Date(),
-            attachments: payload.attachments || [],
+            user_id: payload.user_id,
+            button: payload.button,
+            place: {
+                chat_id: payload.chat_id,
+                message_id: payload.message_id,
+            },
+            name: payload.name,
+            text: payload.text,
+            attachments_base64: payload.attachments_base64,
+            date_time: payload.date_time,
         };
     }
 

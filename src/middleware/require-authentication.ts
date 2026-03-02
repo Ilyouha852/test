@@ -1,7 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { getJwtTokenFromCookie } from '../features/user-authentication/user-authentication-helpers.js';
-
 /**
  * Middleware для проверки аутентификации пользователя.
  * Выбрасывает ошибку, если токен отсутствует или невалиден.
