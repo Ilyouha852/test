@@ -21,8 +21,9 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Build Docker image
-      run: npm run docker:build
+    # Временно отключаем сборку
+    # - name: Build Docker image
+    #   run: npm run docker:build
         
     - name: Deploy to Swarm
       run: npm run deploy:swarm
