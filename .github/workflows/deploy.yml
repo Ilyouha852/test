@@ -16,17 +16,18 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
         
-    - name: Install dependencies
-      run: npm ci
+    - name: Install Yarn
+      run: npm install -g yarn
       
-    # Временно отключаем сборку
-    # - name: Build Docker image
-    #   run: npm run docker:build
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      
+    - name: Build Docker image
+      run: yarn docker:build
         
     - name: Deploy to Swarm
-      run: npm run deploy:swarm
+      run: yarn deploy:swarm
       env:
         PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
         PORTAINER_API_KEY: ${{ secrets.PORTAINER_API_KEY }}
