@@ -12,9 +12,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-<<<<<<< HEAD
-    - name: Deploy to Swarm via Portainer
-=======
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -28,7 +25,6 @@ jobs:
       run: npm run docker:build
         
     - name: Deploy to Swarm
->>>>>>> c314bb05558de51415c9a396370384833ed21b16
       run: npm run deploy:swarm
       env:
         PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
@@ -48,4 +44,4 @@ jobs:
         MINIO_REGION: ${{ secrets.MINIO_REGION }}
         MINIO_BUCKET: ${{ secrets.MINIO_BUCKET }}
         
-        TAG: ${{ github.sha }}  # Автоматически использует хеш комита как тег
+        TAG: ${{ github.sha }}
