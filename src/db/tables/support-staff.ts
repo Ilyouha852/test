@@ -2,13 +2,11 @@
 import { createEntityId, METADATA_SK, TABLE_NAMES, type SupportStaff } from '../types.js';
 import { getItem, putItem, deleteItem } from './base.js';
 
-export async function createSupportStaff(login: string, name: string): Promise<SupportStaff> {
-    const id = createEntityId('SUPPORT_STAFF', login);
+export async function createSupportStaff(id: string, name: string): Promise<SupportStaff> {
     const now = new Date().toISOString();
     const staff: SupportStaff = {
         id,
         sk: METADATA_SK,
-        login,
         name,
         createdAt: now,
     };
@@ -21,8 +19,14 @@ export async function getSupportStaffByLogin(login: string): Promise<SupportStaf
     return getItem<SupportStaff>(TABLE_NAMES.SUPPORT_STAFF, id);
 }
 
-export async function isSupportStaff(login: string): Promise<boolean> {
-    const staff = await getSupportStaffByLogin(login);
+export async function getSupportStaffById(id_search:string): Promise<SupportStaff | undefined>
+{
+    const id = createEntityId('SUPPORT_STAFF', id_search);
+    return getItem<SupportStaff>(TABLE_NAMES.SUPPORT_STAFF, id);
+}
+
+export async function isSupportStaff(id: string): Promise<boolean> {
+    const staff = await getSupportStaffByLogin(id);
     return staff !== undefined;
 }
 

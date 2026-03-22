@@ -185,7 +185,6 @@ export const TABLE_NAMES = {
 export interface SupportStaff {
     id: string; // PK: STAFF#<login>
     sk: string; // SK: METADATA
-    login: string;
     name: string;
     createdAt: string;
 }
