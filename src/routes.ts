@@ -3,6 +3,10 @@ import { mainBotController } from './controllers/main-bot-controller.js';
 
 export const apiV1Router = Router();
 
+apiV1Router.get('/health-check', (_req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
+
 // apiV1Router.use('/health-check', healthCheckRoutes);
 apiV1Router.use('/image', mainBotController.handleImage.bind(mainBotController));
 apiV1Router.use('/command', mainBotController.handleCommand.bind(mainBotController));

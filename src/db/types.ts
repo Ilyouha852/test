@@ -183,9 +183,9 @@ export const TABLE_NAMES = {
 } as const;
 
 export interface SupportStaff {
-    id: string; // PK: STAFF#<login>
-    sk: string; // SK: METADATA
-    name: string;
+    id: string;      // PK: STAFF#<userId>
+    sk: string;      // SK: METADATA
+    userId: string;  // хранит USER#<cuid> из таблицы User
     createdAt: string;
 }
 
