@@ -65,7 +65,7 @@ class MainBotController {
      * Обработка унифицированного сообщения - основная бизнес-логика
      */
     async processUserMessage(message: UnifiedMessage): Promise<void> {
-        const userId = message.userId;
+        const userId = message.user_id;
         console.log(`\n👤 Processing message from user: ${userId}`);
 
         try {
@@ -175,7 +175,7 @@ class MainBotController {
      * Преобразовать UnifiedMessage в событие XState
      */
     private mapMessageToEvent(message: UnifiedMessage): any {
-        const content = message.content.trim().toUpperCase();
+        const content = message.text.trim().toUpperCase();
 
         // Сопоставить общие текстовые команды с событиями
         const eventMap: Record<string, any> = {
@@ -216,7 +216,7 @@ class MainBotController {
         }
 
         // По умолчанию: считать текстовым вводом (для мастеров)
-        return { type: 'TEXT_INPUT', text: message.content };
+        return { type: 'TEXT_INPUT', text: message.text };
     }
 }
 

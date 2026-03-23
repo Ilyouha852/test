@@ -1,41 +1,36 @@
 import 'dotenv/config';
 
+import express from 'express';
 import morgan from 'morgan';
 
-import { buildApp } from './app.js';
 import { MockConnector } from './modules/messenger-aggregator/connectors/mock-connector.js';
 import { messengerAggregator } from './modules/messenger-aggregator/messenger-aggregator.js';
-import { WebServer } from './modules/messenger-aggregator/web-server.js';
+import { apiV1Router } from './routes.js';
 
-const port: number = Number(process.env.PORT) || 3007;
-const botBaseUrl: string =
-    process.env.BOT_BASE_URL ||
-    `${process.env.PROTOCOL || 'http'}://${process.env.HOST || 'localhost'}:${process.env.BOT_PORT || 3007}`;
-const botPort: number = Number(process.env.BOT_PORT) || 3008;
+const serverPort: number = Number(process.env.PORT) || 3007;
+const serverUrl: string = process.env.BOT_BASE_URL || 'localhost';
 
-const app = buildApp();
+const app = express();
 
-// Morgan должен быть ПЕРВЫМ middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const environment = process.env.NODE_ENV || 'development';
-app.use(morgan('dev'));
 
-// --- Bot Infrastructure Setup ---
-// 1. Register connectors
+if (environment == 'development') {
+    app.use(morgan('dev'));
+}
+
 messengerAggregator.registerConnector(new MockConnector());
 
-// 2. Start Bot WebServer
-const botServer = new WebServer(messengerAggregator, botBaseUrl);
-botServer.start(botPort);
+app.use(apiV1Router);
 
-// --------------------------------
-
-const server = app.listen(port, () => {
-    console.log(`🚀 API Сервер запущен по адресу http://localhost:${port}`);
+app.use('*', (_req, res) => {
+    res.status(404).json({ error: 'Маршрут не найден' });
 });
 
-process.on('SIGTERM', () => {
-    console.log('Получен сигнал SIGTERM: закрытие серверов');
-    server.close(() => {
-        console.log('HTTP сервер закрыт');
-    });
+app.listen(serverPort, serverUrl, () => {
+    console.log(`🚀 API Сервер запущен по адресу ${serverUrl}:${serverPort}`);
+    console.log(`   GET  /health-check`);
+    console.log(`   POST /user_message`);
 });
