@@ -1,13 +1,20 @@
 import type { Request, Response } from 'express';
 import { createActor } from 'xstate';
 
-import type { Actions, Commands, messageImage, InputKeyboard, userMessage } from '../modules/messenger-aggregator/types.js';
-
-import { appealRootMachine } from '../machines/main-states.js';
-import { messengerAggregator, type MessengerAggregator } from '../modules/messenger-aggregator/messenger-aggregator.js';
-
-import stateService from '../services/state-service.js';
 import { isSupportStaff } from '../db/tables/support-staff.js';
+import { appealRootMachine } from '../machines/main-states.js';
+import {
+    type MessengerAggregator,
+    messengerAggregator,
+} from '../modules/messenger-aggregator/messenger-aggregator.js';
+import type {
+    Actions,
+    Commands,
+    InputKeyboard,
+    messageImage,
+    userMessage,
+} from '../modules/messenger-aggregator/types.js';
+import stateService from '../services/state-service.js';
 
 /**
  * MainBotController - Обрабатывает полный цикл обработки вебхуков
@@ -34,19 +41,18 @@ class MainBotController {
         this.messengerAggregator = messengerAggregator;
     }
 
-
     async handleImage(req: Request, res: Response): Promise<void> {
         try {
             console.log('🖼️ Image received:', req.body);
-            
+
             // Парсим в тип Image
             const image = await messengerAggregator.parseMessageImage(req.body);
-            
+
             console.log('✅ Parsed image:', image);
-            
+
             // Здесь логика обработки изображения
             await this.processImage(image);
-            
+
             res.status(200).json({ success: true });
         } catch (error) {
             console.error('❌ Error handling image:', error);
@@ -54,22 +60,22 @@ class MainBotController {
         }
     }
 
-    async processImage(image: messageImage): Promise <void>{
-        console.log('Заглушка')
+    async processImage(image: messageImage): Promise<void> {
+        console.log('Заглушка');
     }
 
     async handleKeyboardInput(req: Request, res: Response): Promise<void> {
         try {
             console.log('⌨️ Keyboard input received:', req.body);
-            
+
             // Парсим в тип EnterKeyboard
             const keyboard = await messengerAggregator.parseKeyboard(req.body);
-            
+
             console.log('✅ Parsed keyboard input:', keyboard);
-            
+
             // Здесь логика обработки ввода с клавиатуры
             await this.processKeyboard(keyboard);
-            
+
             res.status(200).json({ success: true });
         } catch (error) {
             console.error('❌ Error handling keyboard input:', error);
@@ -77,24 +83,22 @@ class MainBotController {
         }
     }
 
-    async processKeyboard(keyboard: InputKeyboard): Promise <void> {
-        console.log('Заглушка')
+    async processKeyboard(keyboard: InputKeyboard): Promise<void> {
+        console.log('Заглушка');
     }
-
-
 
     async handleAction(req: Request, res: Response): Promise<void> {
         try {
             console.log('⚡ Action received:', req.body);
-            
+
             // Парсим в тип Actions
             const action = await messengerAggregator.parseAction(req.body);
-            
+
             console.log('✅ Parsed action:', action);
-            
+
             // Здесь логика обработки действия
             await this.processAction(action);
-            
+
             res.status(200).json({ success: true });
         } catch (error) {
             console.error('❌ Error handling action:', error);
@@ -102,8 +106,7 @@ class MainBotController {
         }
     }
 
-    async processAction(action: Actions): Promise<void>
-    {
+    async processAction(action: Actions): Promise<void> {
         const userId = action.user_id;
         console.log(`\n👤 Processing message from user: ${userId}`);
 
@@ -131,7 +134,7 @@ class MainBotController {
             const event = this.mapMessageToEvent(action);
             console.log(`📤 Sending event to machine:`, event);
             actor.send(event);
-        const initialState = actor.getSnapshot();
+            const initialState = actor.getSnapshot();
             const initialValue = JSON.stringify(initialState.value);
 
             await new Promise<void>(resolve => {
@@ -176,27 +179,23 @@ class MainBotController {
             console.error(
                 `❌ Error processing message for user ${userId}:`,
                 error,
-            );        
+            );
         }
-        
-
     }
-
-    
 
     async handleCommand(req: Request, res: Response): Promise<void> {
         try {
             console.log('🎯 Command received:', req.body);
-            
+
             // Отправляем в агрегатор для парсинга в тип Commands
             const command = await messengerAggregator.parseCommand(req.body);
-            
+
             // Дальше работаем с типизированным command
             console.log('✅ Parsed command:', command);
-            
+
             // Здесь ваша логика обработки команды
             await this.processCommand(command);
-            
+
             res.status(200).json({ success: true });
         } catch (error) {
             console.error('❌ Error handling command:', error);
@@ -205,7 +204,7 @@ class MainBotController {
     }
 
     async processCommand(command: Commands): Promise<void> {
-    const userId = command.user_id;
+        const userId = command.user_id;
         console.log(`\n👤 Processing message from user: ${userId}`);
 
         try {
@@ -232,7 +231,7 @@ class MainBotController {
             const event = this.mapMessageCommands(command);
             console.log(`📤 Sending event to machine:`, event);
             actor.send(event);
-        const initialState = actor.getSnapshot();
+            const initialState = actor.getSnapshot();
             const initialValue = JSON.stringify(initialState.value);
 
             await new Promise<void>(resolve => {
@@ -277,36 +276,34 @@ class MainBotController {
             console.error(
                 `❌ Error processing message for user ${userId}:`,
                 error,
-            );        
+            );
         }
-        
-
     }
 
-  async handleUserMessage(req: Request, res: Response): Promise<void> {
+    async handleUserMessage(req: Request, res: Response): Promise<void> {
         try {
             console.log('💬 User message received:', req.body);
-            
+
             // Парсим в тип UserMessage
-            const message = await messengerAggregator.parseUserMessage(req.body);
-            
+            const message = await messengerAggregator.parseUserMessage(
+                req.body,
+            );
+
             console.log('✅ Parsed user message:', message);
-            
+
             // Здесь логика обработки сообщения
             await this.processUserMessage(message);
-            
+
             res.status(200).json({ success: true });
         } catch (error) {
             console.error('❌ Error handling user message:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     }
-    
-    async processUserMessage(message: userMessage): Promise <void>
-    {
-        console.log('Заглушка')
+
+    async processUserMessage(message: userMessage): Promise<void> {
+        console.log('Заглушка');
     }
-    
 
     /**
      * Создать новый экземпляр машины состояний
@@ -319,10 +316,9 @@ class MainBotController {
         return actor;
     }
 
-    private Auth(userId:string):any{
-        if(isSupportStaff(userId))
-            return true
-        return false
+    private async Auth(userId: string) {
+        if (await isSupportStaff(userId)) return true;
+        return false;
     }
 
     /**
@@ -338,7 +334,6 @@ class MainBotController {
         actor.start();
         return actor;
     }
-    
 
     private mapMessageCommands(command: Commands): any {
         const content = command.name.trim().toUpperCase();
@@ -355,9 +350,8 @@ class MainBotController {
         }
 
         // По умолчанию: считать текстовым вводом (для мастеров)
-        return { type: 'TEXT_INPUT', text: command.name};
+        return { type: 'TEXT_INPUT', text: command.name };
     }
-
 
     /**
      * Преобразовать UnifiedMessage в событие XState
@@ -408,4 +402,6 @@ class MainBotController {
 
 export default MainBotController;
 const messengerAggregatorInstance = messengerAggregator; // или создайте, если нужно
-export const mainBotController = new MainBotController(messengerAggregatorInstance);
+export const mainBotController = new MainBotController(
+    messengerAggregatorInstance,
+);
