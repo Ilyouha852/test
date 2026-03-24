@@ -14,6 +14,9 @@ export interface AppealContext {
     attachments?: string[];
 }
 
+
+
+
 /**
  * Создать новое обращение в DynamoDB
  */
