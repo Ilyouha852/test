@@ -7,6 +7,9 @@ export const apiV1Router = Router();
 apiV1Router.get('/health-check', (_req, res) => {
     res.status(200).json({ status: 'OK' });
 });
+apiV1Router.post('/ai-agent', (_req, res) => {
+    res.status(200);
+});
 
 // apiV1Router.use('/health-check', healthCheckRoutes);
 apiV1Router.use('/image', mainBotController.handleImage.bind(mainBotController));
