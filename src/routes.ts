@@ -8,7 +8,7 @@ apiV1Router.get('/health-check', (_req, res) => {
     res.status(200).json({ status: 'OK' });
 });
 apiV1Router.post('/ai-agent', (_req, res) => {
-    res.status(200);
+    res.sendStatus(200);
 });
 
 // apiV1Router.use('/health-check', healthCheckRoutes);
