@@ -1,20 +1,27 @@
 import type { Connector } from './interfaces/connector.js';
-import type { UnifiedMessage } from './types.js';
+import type { Actions, Commands, messageImage, InputKeyboard, userMessage, BaseInf } from './types.js';
 
-type MessageHandler = (message: UnifiedMessage) => void;
+
+// Типы сообщений (оставляем как есть)
+
+
+// Тип для результата парсинга
+export type ParsedMessage = 
+    | { type: 'action'; data: Actions }
+    | { type: 'command'; data: Commands }
+    | { type: 'image'; data: messageImage}
+    | { type: 'keyboard'; data: InputKeyboard }
+    | { type: 'user_message'; data: userMessage };
 
 export class MessengerAggregator {
     private connectors: Map<string, Connector> = new Map();
-    private messageHandlers: MessageHandler[] = [];
 
     /**
-     * Регистрация нового коннектора (например, Telegram, WhatsApp)
+     * Регистрация нового коннектора
      */
     registerConnector(connector: Connector) {
         if (this.connectors.has(connector.name)) {
-            console.warn(
-                `Коннектор ${connector.name} уже зарегистрирован. Перезапись.`,
-            );
+            console.warn(`Коннектор ${connector.name} уже зарегистрирован. Перезапись.`);
         }
         this.connectors.set(connector.name, connector);
         console.log(`✅ Коннектор зарегистрирован: ${connector.name}`);
@@ -28,45 +35,78 @@ export class MessengerAggregator {
     }
 
     /**
-     * Обработка входящего вебхука от определенного источника
+     * Парсинг команды
      */
-    async processWebhook(
-        source: string,
-        payload: any,
-    ): Promise<UnifiedMessage | undefined> {
-        const connector = this.connectors.get(source);
-        if (!connector) {
-            console.error(`❌ Коннектор не найден для источника: ${source}`);
-            return undefined;
+    async parseCommand(payload: any): Promise<Commands> {
+        const connector = this.connectors.get(payload.source || 'default');
+        if (connector) {
+            const parsed = await connector.parse(payload);
+            return parsed as unknown as Commands;
         }
-
-        try {
-            const message = await connector.parse(payload);
-            if (message) {
-                this.notifyHandlers(message);
-            }
-            return message;
-        } catch (error) {
-            console.error(`❌ Ошибка обработки вебхука для ${source}:`, error);
-            return undefined;
-        }
+        return payload as Commands;
     }
 
     /**
-     * Подписка на входящие унифицированные сообщения
+     * Парсинг действия
      */
-    onMessage(handler: MessageHandler) {
-        this.messageHandlers.push(handler);
+    async parseAction(payload: any): Promise<Actions> {
+        const connector = this.connectors.get(payload.source || 'default');
+        if (connector) {
+            const parsed = await connector.parse(payload);
+            return parsed as unknown as Actions;
+        }
+        return payload as Actions;
     }
 
-    private notifyHandlers(message: UnifiedMessage) {
-        for (const handler of this.messageHandlers) {
-            try {
-                handler(message);
-            } catch (error) {
-                console.error('Ошибка в обработчике сообщения:', error);
-            }
+    /**
+     * достаем айди
+     */
+
+    async parseId(payload: any): Promise <BaseInf>
+    {
+        const connector = this.connectors.get(payload.source || 'default');
+        if (connector) {
+            const parsed = await connector.parse(payload);
+            return parsed as unknown as BaseInf;
         }
+        return payload as BaseInf;
+    }
+
+
+    /**
+     * Парсинг изображения
+     */
+    async parseMessageImage(payload: any): Promise<messageImage> {
+        const connector = this.connectors.get(payload.source || 'default');
+        if (connector) {
+            const parsed = await connector.parse(payload);
+            return parsed as unknown as messageImage;
+        }
+        return payload as messageImage;
+    }
+
+    /**
+     * Парсинг ввода с клавиатуры
+     */
+    async parseKeyboard(payload: any): Promise<InputKeyboard> {
+        const connector = this.connectors.get(payload.source || 'default');
+        if (connector) {
+            const parsed = await connector.parse(payload);
+            return parsed as unknown as InputKeyboard;
+        }
+        return payload as InputKeyboard;
+    }
+
+    /**
+     * Парсинг пользовательского сообщения
+     */
+    async parseUserMessage(payload: any): Promise<userMessage> {
+        const connector = this.connectors.get(payload.source || 'default');
+        if (connector) {
+            const parsed = await connector.parse(payload);
+            return parsed as unknown as userMessage;
+        }
+        return payload as userMessage;
     }
 }
 

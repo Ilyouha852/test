@@ -1,6 +1,5 @@
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import eslintPluginUnicorn from 'eslint-plugin-unicorn';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import vitest from '@vitest/eslint-plugin';
@@ -31,5 +30,4 @@ export default defineConfig([
             'vitest/expect-expect': 'warn',
         },
     },
-    eslintPluginPrettierRecommended,
 ]);

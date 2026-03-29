@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc --project tsconfig.json && shx cp package.json yarn.lock dist/",
     "start": "node src/index.ts",
     "dev": "tsx watch src/index.ts",
     "init-tables": "tsx scripts/migrate.ts",
@@ -31,6 +31,7 @@
     "minio": "^8.0.6",
     "morgan": "^1.10.1",
     "node-cache": "^5.1.2",
+    "serverless-http": "^4.0.0",
     "xstate": "^5.23.0",
     "zod": "^4.1.12"
   },
@@ -51,6 +52,7 @@
     "eslint-plugin-unicorn": "^61.0.2",
     "eslint-plugin-vitest": "^0.5.4",
     "prettier": "^3.6.2",
+    "shx": "^0.4.0",
     "supertest": "^7.1.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
@@ -62,7 +64,17 @@
     "type": "git",
     "url": "git+https://github.com/ZeneZ0/Support_Bot_IST.git"
   },
-  "keywords": ["bot", "support", "xstate", "express", "typescript", "dynamodb", "minio", "s3", "storage"],
+  "keywords": [
+    "bot",
+    "support",
+    "xstate",
+    "express",
+    "typescript",
+    "dynamodb",
+    "minio",
+    "s3",
+    "storage"
+  ],
   "author": "ZeneZ0",
   "license": "ISC",
   "bugs": {
