@@ -1,5 +1,11 @@
 # Support Bot IST
 
+<p align="center">
+  <a href="DOCUMENTATION.md">
+    <img src="https://img.shields.io/badge/%F0%9F%93%96-%D0%9F%D0%BE%D0%BB%D0%BD%D0%B0%D1%8F%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0-8A2BE2?style=for-the-badge&logo=markdown&logoColor=white&height=60" alt="Полная документация проекта" />
+  </a>
+</p>
+
 ## 📋 Описание проекта
 
 **Support Bot IST** — это модульная система для автоматизации технической поддержки и обработки обращений. Проект построен на архитектуре микросервисов (в рамках монорепозитория) с использованием **Node.js**, **TypeScript**, **Express**, **XState** для управления состояниями, **DynamoDB** для хранения данных и **MinIO (S3)** для хранения файлов.
@@ -14,29 +20,43 @@
 
 ```text
 src/
-├── config/                 # Конфигурация (DynamoDB, env)
-├── controllers/            # Контроллеры (обработка HTTP запросов)
-│   └── main-bot-controller.ts # Основной контроллер для вебхуков Telegram
-├── features/               # Модули функциональности (Auth, User Profile, Health Check)
-├── machines/               # Машины состояний (XState)
-│   ├── support-appeal-machine.ts # Логика обработки обращения в поддержку
-│   └── repair-bot-machine.ts     # Логика бота по ремонту
-├── middleware/             # Middleware (Аутентификация, Валидация)
+├── config/
+│   └── dynamo-db.ts                  # Конфигурация DynamoDB и env
+├── controllers/
+│   └── main-bot-controller.ts        # Основной HTTP-контроллер
+├── machines/
+│   ├── main-states.ts                # Корневая машина пользователя
+│   ├── master-create-appeal.ts       # Создание обращения
+│   ├── master-join-appeal.ts         # Присоединение к обращению
+│   ├── repair-bot-machine.ts         # Диагностический сценарий
+│   └── support-appeal-machine.ts     # Обработка обращения сотрудником
+├── middleware/
+│   ├── auth.ts                       # JWT-аутентификация
+│   ├── connector-name.ts             # Извлечение имени коннектора из заголовка
+│   ├── require-authentication.ts      # Защита маршрутов
+│   └── validate.ts                   # Валидация входных данных
 ├── modules/
-│   └── messenger-aggregator/ # Модуль агрегации мессенджеров
-│       ├── connectors/     # Коннекторы для разных платформ (Mock, Telegram)
-│       ├── interfaces/     # Интерфейсы (Connector)
-│       └── messenger-aggregator.ts # Основной класс агрегатора
-├── scripts/                # Скрипты для инициализации и тестов
-├── services/               # Бизнес-логика
-│   ├── bot-core-service.ts   # Ядро бота (связь агрегатора, машин состояний и БД)
-│   ├── s3-service.ts        # Работа с MinIO (S3)
-│   ├── dynamo-service.ts    # Работа с DynamoDB
-│   └── state-service.ts     # In-memory хранилище состояний пользователей
-├── utils/                  # Утилиты
-├── app.ts                  # Настройка Express приложения
-├── index.ts                # Точка входа (запуск сервера)
-└── routes.ts               # Маршрутизация API
+│   ├── messenger-aggregator/         # Агрегация сообщений мессенджеров
+│   │   ├── interfaces/               # Интерфейсы коннекторов
+│   │   ├── messenger-aggregator.ts   # Реестр и парсинг сообщений
+│   │   └── types.ts                  # Типы агрегатора
+│   └── types/                        # Типы входящих сообщений
+│       ├── action.ts                 # Действия пользователя
+│       ├── command.ts                # Команды
+│       ├── image.ts                  # Сообщения с изображениями
+│       ├── inputKeyboard.ts          # Нажатия кнопок
+│       └── userMessage.ts            # Текстовые сообщения
+├── services/
+│   ├── appeal-actions.ts             # Действия над обращениями
+│   ├── appeal-service.ts             # Сервис обращений
+│   ├── counter-service.ts            # Сервис счетчиков
+│   ├── dynamo-service.ts             # Работа с DynamoDB
+│   ├── message-classifier/           # Классификация сообщений по контексту
+│   ├── messaging-service.ts          # Отправка сообщений
+│   ├── s3-service.ts                 # Работа с S3/MinIO
+│   └── state-service.ts              # In-memory хранилище состояний
+├── routes.ts                         # API-роуты
+└── index.ts                          # Точка входа
 ```
 
 ### 🧠 Дерево состояний (State Machines)

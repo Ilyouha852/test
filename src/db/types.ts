@@ -217,6 +217,19 @@ export const ID_PREFIXES = {
 export const METADATA_SK = 'METADATA';
 
 // ============================================================================
+// Appeal Status Names (из словаря статусов документации)
+// ============================================================================
+export const APPEAL_STATUS_NAMES = {
+    CREATED: 'Created',
+    VIEWED: 'Viewed',
+    IN_PROGRESS: 'In_progress',
+    WAITING_FOR_EXTERNAL: 'Waiting_for_external',
+    DECIDED: 'Decided',
+    CLOSED: 'Closed',
+} as const;
+export type AppealStatusName = typeof APPEAL_STATUS_NAMES[keyof typeof APPEAL_STATUS_NAMES];
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 

@@ -29,9 +29,9 @@ export async function listRequestsForUser(
     const params = {
         removeUndefinedValues: true,
         TableName: table,
-        IndexName: 'status-createdAt-index',
-        KeyConditionExpression: '#status = :inProgress',
-        ExpressionAttributeNames: { '#status': 'status' },
+        IndexName: 'StatusIndex',
+        KeyConditionExpression: '#appealStatusId = :inProgress',
+        ExpressionAttributeNames: { '#appealStatusId': 'appealStatusId' },
         ExpressionAttributeValues: { ':inProgress': 'in_progress' },
         ScanIndexForward: false,
         Limit: 20,
@@ -50,8 +50,10 @@ export async function listRequestsForUser(
             const scanRes = await ddb.send(
                 new ScanCommand({
                     TableName: table,
-                    FilterExpression: '#status = :inProgress',
-                    ExpressionAttributeNames: { '#status': 'status' },
+                    FilterExpression: '#appealStatusId = :inProgress',
+                    ExpressionAttributeNames: {
+                        '#appealStatusId': 'appealStatusId',
+                    },
                     ExpressionAttributeValues: { ':inProgress': 'in_progress' },
                     Limit: 50,
                 }),
@@ -71,8 +73,10 @@ export async function listRequestsForUser(
                 const scanRes = await ddb.send(
                     new ScanCommand({
                         TableName: table,
-                        FilterExpression: '#status = :inProgress',
-                        ExpressionAttributeNames: { '#status': 'status' },
+                        FilterExpression: '#appealStatusId = :inProgress',
+                        ExpressionAttributeNames: {
+                            '#appealStatusId': 'appealStatusId',
+                        },
                         ExpressionAttributeValues: {
                             ':inProgress': 'in_progress',
                         },

@@ -8,8 +8,6 @@
     "build": "tsc --project tsconfig.json && shx cp package.json yarn.lock dist/",
     "start": "node src/index.ts",
     "dev": "tsx watch src/index.ts",
-    "init-tables": "tsx scripts/migrate.ts",
-    "refresh_database": "tsx scripts/migrate.ts --drop",
     "format": "prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

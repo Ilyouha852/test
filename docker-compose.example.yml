@@ -11,7 +11,7 @@ services:
     command: >
       server /data --console-address ":9001"
     volumes:
-      - C://support-bot/minio-data:/data
+      - <local_path>/support-bot/minio-data:/data
     env_file:
       - .env
 
@@ -23,7 +23,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - "C://support-bot:/home/dynamodblocal/data"
+      - "<local_path>/support-bot:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
     env_file:
       - .env
