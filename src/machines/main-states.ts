@@ -1,4 +1,4 @@
-import { assign, createMachine, forwardTo } from 'xstate';
+import { assign, createMachine, forwardTo, raise } from 'xstate';
 
 import { appealCreateMachine } from './master-create-appeal.js';
 import { appealJoinMachine } from './master-join-appeal.js';
@@ -58,6 +58,7 @@ export const appealRootMachine = createMachine(
                     OPEN_LIST: { target: 'listAppeals' },
                     OPEN_CREATE: { target: 'createAppeal' },
                     HELP: { actions: 'showHelp' },
+                    TEXT_INPUT: { actions: 'handleTextInWelcome' },
                 },
             },
 
@@ -76,6 +77,7 @@ export const appealRootMachine = createMachine(
                     OPEN_CREATE: { target: 'createAppeal' },
                     BACK: { target: 'welcome' },
                     HELP: { actions: 'showHelp' },
+                    TEXT_INPUT: { actions: 'handleTextInList' },
                 },
             },
 
@@ -85,6 +87,7 @@ export const appealRootMachine = createMachine(
                     JOIN_APPEAL: { target: 'joinMaster' },
                     BACK: { target: 'listAppeals' },
                     HELP: { actions: 'showHelp' },
+                    TEXT_INPUT: { actions: 'handleTextInAppeal' },
                 },
             },
 
@@ -183,6 +186,36 @@ export const appealRootMachine = createMachine(
     },
     {
         actions: {
+            // Обработчики текстовых сообщений — для Telegram и других коннекторов,
+            // которые передают нажатия кнопок как текст через /user_message
+            handleTextInWelcome: raise(({ event }: any) => {
+                const text = (event.text ?? '').trim().toUpperCase();
+                if (text === 'МОИ ОБРАЩЕНИЯ' || text === 'OPEN_LIST') return { type: 'OPEN_LIST' };
+                if (text === 'СОЗДАТЬ ОБРАЩЕНИЕ' || text === 'OPEN_CREATE') return { type: 'OPEN_CREATE' };
+                if (text === 'ПОМОЩЬ' || text === 'HELP') return { type: 'HELP' };
+                return { type: 'HELP' };
+            }),
+
+            handleTextInList: raise(({ event }: any) => {
+                const text = (event.text ?? '').trim().toUpperCase();
+                if (text === 'СОЗДАТЬ ОБРАЩЕНИЕ' || text === 'OPEN_CREATE') return { type: 'OPEN_CREATE' };
+                if (text === 'НАЗАД' || text === 'BACK') return { type: 'BACK' };
+                if (text === 'ПОМОЩЬ' || text === 'HELP') return { type: 'HELP' };
+                // Если текст — ID обращения
+                if (text.startsWith('APPEAL#') || /^appeal#\S+$/i.test(event.text ?? '')) {
+                    return { type: 'SELECT_APPEAL', appealId: event.text.trim() };
+                }
+                return { type: 'HELP' };
+            }),
+
+            handleTextInAppeal: raise(({ event }: any) => {
+                const text = (event.text ?? '').trim().toUpperCase();
+                if (text === 'ПРИСОЕДИНИТЬСЯ' || text === 'JOIN_APPEAL') return { type: 'JOIN_APPEAL' };
+                if (text === 'НАЗАД' || text === 'BACK') return { type: 'BACK' };
+                if (text === 'ПОМОЩЬ' || text === 'HELP') return { type: 'HELP' };
+                return { type: 'HELP' };
+            }),
+
             showWelcome: ({ context }) => {
                 const { connectorName, userId, chatId } = context;
                 (async () => {
@@ -201,8 +234,8 @@ export const appealRootMachine = createMachine(
                                 { text: 'Помощь' },
                             ],
                         );
-                    } catch (err) {
-                        console.error('[showWelcome] Ошибка отправки:', err);
+                    } catch (error) {
+                        console.error('[showWelcome] Ошибка отправки:', error);
                     }
                 })();
             },
@@ -238,8 +271,8 @@ export const appealRootMachine = createMachine(
                             chatId,
                             text,
                         );
-                    } catch (err) {
-                        console.error('[showAppealList] Ошибка:', err);
+                    } catch (error) {
+                        console.error('[showAppealList] Ошибка:', error);
                     }
                 })();
             },
@@ -261,8 +294,8 @@ export const appealRootMachine = createMachine(
                                 { text: 'Назад' },
                             ],
                         );
-                    } catch (err) {
-                        console.error('[showAppealCard] Ошибка:', err);
+                    } catch (error) {
+                        console.error('[showAppealCard] Ошибка:', error);
                     }
                 })();
             },
@@ -280,8 +313,8 @@ export const appealRootMachine = createMachine(
                             chatId,
                             '✅ Обращение успешно создано! Возврат к списку.',
                         );
-                    } catch (err) {
-                        console.error('[handleAppealCreated] Ошибка:', err);
+                    } catch (error) {
+                        console.error('[handleAppealCreated] Ошибка:', error);
                     }
                 })();
             },
@@ -299,8 +332,8 @@ export const appealRootMachine = createMachine(
                             chatId,
                             '↩️ Создание обращения отменено.',
                         );
-                    } catch (err) {
-                        console.error('[handleAppealCancelled] Ошибка:', err);
+                    } catch (error) {
+                        console.error('[handleAppealCancelled] Ошибка:', error);
                     }
                 })();
             },
@@ -323,8 +356,8 @@ export const appealRootMachine = createMachine(
                                 { text: 'Назад' },
                             ],
                         );
-                    } catch (err) {
-                        console.error('[showHelp] Ошибка:', err);
+                    } catch (error) {
+                        console.error('[showHelp] Ошибка:', error);
                     }
                 })();
             },

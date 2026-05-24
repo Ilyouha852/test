@@ -103,7 +103,13 @@ class MainBotController {
         try {
             const command = await this.messengerAggregator.parseCommand(req.body);
             const connectorName = req.connectorName;
-            await this.processCommand(command, connectorName);
+            const isStaff = await isSupportStaff(command.user_id).catch(() => false);
+            if (isStaff) {
+                await this.processStaffCommand(command, connectorName);
+            } else {
+                await this.processUserCommand(command, connectorName);
+            }
+
             res.status(200).json({ success: true });
         } catch (error) {
             console.error('❌ handleCommand error:', error);
@@ -136,7 +142,7 @@ class MainBotController {
     // User processing
     // =========================================================================
 
-    private async processCommand(command: Commands, connectorName: string): Promise<void> {
+    private async processUserCommand(command: Commands, connectorName: string): Promise<void> {
         const userId = command.user_id;
         const chatId = command.place.chat_id;
 
@@ -146,6 +152,24 @@ class MainBotController {
         const event = this.mapCommandToEvent(command.name);
 
         await this.sendEventAndSave(actor, event, userId, 'appealRoot');
+    }
+    
+    private async processStaffCommand(command: Commands, connectorName: string): Promise<void> {
+        const staffUserId = command.user_id;
+        const staffChatId = command.place.chat_id;
+        console.log(`\n🛠️ [Staff] Command from ${staffUserId}: ${command.name}`);
+        const supportActor = await this.loadOrCreateSupportChatMachine(
+            staffUserId,
+            connectorName,
+            staffChatId,
+        );
+        const event = this.mapSupportChatTextToEvent(command.name);
+        await this.sendEventAndSave(
+            supportActor,
+            event,
+            `${SUPPORT_MACHINE_KEY_PREFIX}:chat:${staffUserId}`,
+            'supportChat',
+        );
     }
 
     private async processUserAction(action: Actions, connectorName: string): Promise<void> {
@@ -179,6 +203,13 @@ class MainBotController {
         console.log(`\n👤 [User] Message from ${userId}: ${message.text}`);
 
         const actor = await this.loadOrCreateUserMachine(userId, connectorName, chatId);
+
+        await this.sendEventAndSave(
+            actor,
+            { type: 'TEXT_INPUT', text: message.text },
+            userId,
+            'appealRoot',
+        );
     }
 
     private async processImage(
@@ -401,7 +432,16 @@ class MainBotController {
         key: string,
         machineType: string,
     ): Promise<void> {
-        const before = JSON.stringify(actor.getSnapshot().value);
+
+        const getSnapshotKey = (snap: any): string => {
+            try {
+                const persisted = actor.getPersistedSnapshot?.() ?? snap;
+                return JSON.stringify(persisted);
+            } catch {
+                return JSON.stringify(snap.value);
+            }
+        };
+        const before = getSnapshotKey(actor.getSnapshot());
 
         actor.send(event);
 
@@ -409,7 +449,7 @@ class MainBotController {
             let resolved = false;
 
             const sub = actor.subscribe((snapshot: any) => {
-                const current = JSON.stringify(snapshot.value);
+                const current = getSnapshotKey(snapshot);
                 if (current !== before && !resolved) {
                     resolved = true;
                     sub.unsubscribe();

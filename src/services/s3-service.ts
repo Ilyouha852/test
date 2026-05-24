@@ -2,32 +2,11 @@ import {
     CopyObjectCommand,
     DeleteObjectCommand,
     PutObjectCommand,
-    S3Client,
 } from '@aws-sdk/client-s3';
 
-const minioEndpoint = process.env.MINIO_ENDPOINT || 'localhost';
-const minioPort = process.env.MINIO_PORT
-    ? Number(process.env.MINIO_PORT)
-    : 9000;
-const minioUseSSL = process.env.MINIO_USE_SSL === 'true';
-const protocol = minioUseSSL ? 'https://' : 'http://';
+import { s3Client, bucket, endpoint } from '../db/init-s3.js';
 
-const endpoint = process.env.MINIO_ENDPOINT?.startsWith('http')
-    ? process.env.MINIO_ENDPOINT
-    : `${protocol}${minioEndpoint}:${minioPort}`;
-
-const bucket =
-    process.env.MINIO_BUCKET || process.env.S3_BUCKET || 'support-bot-files';
-
-const s3 = new S3Client({
-    endpoint,
-    region: process.env.MINIO_REGION || 'us-east-1',
-    credentials: {
-        accessKeyId: process.env.MINIO_ACCESS_KEY || 'minioadmin',
-        secretAccessKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
-    },
-    forcePathStyle: true,
-});
+const s3 = s3Client;
 
 /**
  * Загрузить файл (буфер) во временную папку S3/MinIO.

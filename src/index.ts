@@ -6,11 +6,18 @@ import serverless from 'serverless-http';
 import { initConnectors } from './connectors/connector-registry.js';
 import { apiV1Router } from './routes.js';
 
+import { initTables } from './db/init-tables.js';
+import { initS3 } from './db/init-s3.js';
+
 const environment = process.env.NODE_ENV || 'development';
 
 if (environment === 'development') {
     dotenv.config();
 }
+
+await initTables();
+
+await initS3();
 
 initConnectors();
 

@@ -1,7 +1,7 @@
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { createId } from '@paralleldrive/cuid2';
 
-import { docClient, TABLE_NAME } from '../config/dynamo-db.js';
+import { docClient } from '../config/dynamo-db.js';
 import { TABLE_NAMES } from '../db/types.js';
 
 export interface AppealContext {
@@ -13,9 +13,6 @@ export interface AppealContext {
     criticality?: string;
     attachments?: string[];
 }
-
-
-
 
 /**
  * Создать новое обращение в DynamoDB

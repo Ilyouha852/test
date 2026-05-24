@@ -1,6 +1,7 @@
 import { QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
-import { docClient, TABLE_NAME } from '../config/dynamo-db.js';
+import { docClient } from '../config/dynamo-db.js';
+import { TABLE_NAMES } from '../db/types.js';
 
 export interface Appeal {
     id: string;
@@ -13,18 +14,16 @@ export interface Appeal {
 }
 
 const ddb = docClient;
+const table = TABLE_NAMES.APPEALS;
 
 /**
  * Перечислить открытые (in_progress) обращения и отформатировать читаемое сообщение.
- * Если существует GSI `status-createdAt-index`, он будет использован; в противном случае используется Scan.
  */
 export async function listRequestsForUser(
     currentUserId: string | undefined,
 ): Promise<string> {
     if (!currentUserId)
         return 'Необходимо авторизоваться, чтобы увидеть обращения.';
-
-    const table = TABLE_NAME;
 
     const params = {
         removeUndefinedValues: true,
@@ -39,13 +38,11 @@ export async function listRequestsForUser(
 
     let items: Appeal[] = [];
 
-    const isLocal =
-        !!process.env.DYNAMODB_ENDPOINT ||
-        process.env.NODE_ENV !== 'production';
-
-    if (isLocal) {
-        // Для локального DynamoDB (и тестов) предпочитаем Scan, чтобы избежать потенциальных проблем с GSI/query
-        // и подписью креденшлов в SDK в некоторых конфигурациях.
+    try {
+        const res = await ddb.send(new QueryCommand(params));
+        items = (res.Items || []) as Appeal[];
+    } catch {
+        // Fallback на Scan, если Query/GSI недоступен
         try {
             const scanRes = await ddb.send(
                 new ScanCommand({
@@ -62,32 +59,6 @@ export async function listRequestsForUser(
         } catch (error) {
             console.error('Failed to fetch appeals:', error);
             return 'Ошибка при получении обращений. Попробуйте позже.';
-        }
-    } else {
-        try {
-            const res = await ddb.send(new QueryCommand(params));
-            items = (res.Items || []) as Appeal[];
-        } catch {
-            // Если Query не удался (нет GSI), используем Scan с FilterExpression.
-            try {
-                const scanRes = await ddb.send(
-                    new ScanCommand({
-                        TableName: table,
-                        FilterExpression: '#appealStatusId = :inProgress',
-                        ExpressionAttributeNames: {
-                            '#appealStatusId': 'appealStatusId',
-                        },
-                        ExpressionAttributeValues: {
-                            ':inProgress': 'in_progress',
-                        },
-                        Limit: 50,
-                    }),
-                );
-                items = (scanRes.Items || []) as Appeal[];
-            } catch (error) {
-                console.error('Failed to fetch appeals:', error);
-                return 'Ошибка при получении обращений. Попробуйте позже.';
-            }
         }
     }
 
